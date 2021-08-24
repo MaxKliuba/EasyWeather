@@ -15,11 +15,19 @@ public interface WeatherApi {
     String API_KEY = "3488770e3e941c4894196cdea0e06a57";
 
     @GET("data/2.5/forecast")
-    Observable<WeatherData> getWeatherDataByCity(@Query("q") String city,
-                                                 @Query("appid") String apiKey,
-                                                 @Query("cnt") int cnt,
-                                                 @Query("units") String units,
-                                                 @Query("lang") String lang);
+    Observable<WeatherData> getWeatherData(@Query("q") String city,
+                                           @Query("appid") String apiKey,
+                                           @Query("cnt") int cnt,
+                                           @Query("units") String units,
+                                           @Query("lang") String lang);
+
+    @GET("data/2.5/forecast")
+    Observable<WeatherData> getWeatherData(@Query("lat") float lat,
+                                           @Query("lon") float lon,
+                                           @Query("appid") String apiKey,
+                                           @Query("cnt") int cnt,
+                                           @Query("units") String units,
+                                           @Query("lang") String lang);
 
     class Instance {
         public static WeatherApi getApi() {
