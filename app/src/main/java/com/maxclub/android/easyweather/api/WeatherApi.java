@@ -14,10 +14,12 @@ public interface WeatherApi {
     String BASE_URL = "https://api.openweathermap.org/";
     String API_KEY = "3488770e3e941c4894196cdea0e06a57";
 
-    @GET("data/2.5/weather")
+    @GET("data/2.5/forecast")
     Observable<WeatherData> getWeatherDataByCity(@Query("q") String city,
                                                  @Query("appid") String apiKey,
-                                                 @Query("units") String units);
+                                                 @Query("cnt") int cnt,
+                                                 @Query("units") String units,
+                                                 @Query("lang") String lang);
 
     class Instance {
         public static WeatherApi getApi() {
