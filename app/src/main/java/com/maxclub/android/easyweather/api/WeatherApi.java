@@ -22,8 +22,8 @@ public interface WeatherApi {
                                            @Query("lang") String lang);
 
     @GET("data/2.5/forecast")
-    Observable<WeatherData> getWeatherData(@Query("lat") float lat,
-                                           @Query("lon") float lon,
+    Observable<WeatherData> getWeatherData(@Query("lat") double lat,
+                                           @Query("lon") double lon,
                                            @Query("appid") String apiKey,
                                            @Query("cnt") int cnt,
                                            @Query("units") String units,

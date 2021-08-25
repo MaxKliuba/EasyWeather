@@ -24,11 +24,22 @@ import io.reactivex.schedulers.Schedulers;
 
 public class SearchWeatherFragment extends Fragment {
 
+    private static final String TAG = "SearchWeatherFragment";
+
     private WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
+    private WeatherData mWeatherData;
     private TextView mTextView;
 
     public static SearchWeatherFragment newInstance() {
         return new SearchWeatherFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+
+        getWeatherByCityName("Київ");
     }
 
     @Nullable
@@ -41,8 +52,7 @@ public class SearchWeatherFragment extends Fragment {
 
         mTextView = (TextView) view.findViewById(R.id.weather_textview);
 
-        getWeatherByCityName("Київ");
-//        getWeatherByLocation(50.4501f, 30.5241f);
+        updateUserInterface();
 
         return view;
     }
@@ -55,15 +65,14 @@ public class SearchWeatherFragment extends Fragment {
                 .subscribe(new DisposableObserver<WeatherData>() {
                     @Override
                     public void onNext(@NotNull WeatherData weatherData) {
-                        mTextView.setText(weatherData.getCity().getName()
-                                + " " + weatherData.getList().get(0).getMain().getTemp()
-                                + " " + weatherData.getList().get(0).getWeather().get(0).getMain());
+                        mWeatherData = weatherData;
+                        updateUserInterface();
                     }
 
                     @Override
                     public void onError(@NotNull Throwable e) {
                         Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.e("TAG", e.getMessage(), e);
+                        Log.e(TAG, e.getMessage(), e);
                     }
 
                     @Override
@@ -73,29 +82,11 @@ public class SearchWeatherFragment extends Fragment {
                 });
     }
 
-    @SuppressLint("CheckResult")
-    private void getWeatherByLocation(float lat, float lon) {
-        mWeatherApi.getWeatherData(lat, lon, WeatherApi.API_KEY, 40, "metric", "en")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<WeatherData>() {
-                    @Override
-                    public void onNext(@NotNull WeatherData weatherData) {
-                        mTextView.setText(weatherData.getCity().getName()
-                                + " " + weatherData.getList().get(0).getMain().getTemp()
-                                + " " + weatherData.getList().get(0).getWeather().get(0).getMain());
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.e("TAG", e.getMessage(), e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+    private void updateUserInterface() {
+        if (mWeatherData != null) {
+            mTextView.setText(mWeatherData.getCity().getName()
+                    + " " + mWeatherData.getList().get(0).getMain().getTemp()
+                    + " " + mWeatherData.getList().get(0).getWeather().get(0).getMain());
+        }
     }
 }

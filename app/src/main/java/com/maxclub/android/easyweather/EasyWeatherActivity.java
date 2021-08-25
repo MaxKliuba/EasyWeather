@@ -6,6 +6,6 @@ public class EasyWeatherActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment createFragment() {
-        return SearchWeatherFragment.newInstance();
+        return LocationWeatherFragment.newInstance();
     }
 }
