@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,7 +31,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class LocationWeatherFragment extends Fragment {
+public class LocationWeatherFragment extends Fragment implements LocationListener {
 
     private static final String TAG = "LocationWeatherFragment";
 
@@ -43,7 +42,6 @@ public class LocationWeatherFragment extends Fragment {
     private static final int REQUEST_LOCATION_PERMISSION = 0;
 
     private GoogleApiClient mGoogleApiClient;
-    private LocationRequest mLocationRequest;
     private Location mLocation;
     private WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
     private WeatherData mWeatherData;
@@ -61,8 +59,8 @@ public class LocationWeatherFragment extends Fragment {
         if (isGooglePlayServicesAvailable()) {
             connectToGoogleApiClient();
         } else {
-            // error message
-            Toast.makeText(getActivity(), "Google Play Services are not available", Toast.LENGTH_LONG).show();
+            Log.e(TAG, "Google Play services are not available");
+            // вивід екрану із повідомленням про відсутність google play services
         }
     }
 
@@ -82,10 +80,37 @@ public class LocationWeatherFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            if (hasLocationPermission()) {
+                registerLocationRequestListener();
+            } else {
+                requestPermissions(LOCATION_PERMISSION, REQUEST_LOCATION_PERMISSION);
+            }
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        removeLocationRequestListener();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
         disconnectFromGoogleApiClient();
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull @NotNull Location location) {
+        Log.i(TAG, "onLocationChanged() -> " + location.getLatitude() + ", " + location.getLongitude());
+        mLocation = location;
+        updateWeather();
     }
 
     private boolean isGooglePlayServicesAvailable() {
@@ -102,6 +127,7 @@ public class LocationWeatherFragment extends Fragment {
                     .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                         @Override
                         public void onConnected(@Nullable @org.jetbrains.annotations.Nullable Bundle bundle) {
+                            Log.i(TAG, "GoogleApiClient.onConnected()");
                             if (hasLocationPermission()) {
                                 registerLocationRequestListener();
                             } else {
@@ -117,7 +143,7 @@ public class LocationWeatherFragment extends Fragment {
                     .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
                         @Override
                         public void onConnectionFailed(@NonNull @NotNull ConnectionResult connectionResult) {
-
+                            Log.e(TAG, "GoogleApiClient connection error");
                         }
                     })
                     .build();
@@ -148,7 +174,7 @@ public class LocationWeatherFragment extends Fragment {
                 if (hasLocationPermission()) {
                     registerLocationRequestListener();
                 } else {
-                    // go to settings button
+                    // вивід екрану із повідомленням про необхідність дозволів і кнопкою переходу у налаштування
                 }
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -157,24 +183,22 @@ public class LocationWeatherFragment extends Fragment {
 
     @SuppressLint("MissingPermission")
     private void registerLocationRequestListener() {
-        if (mLocationRequest == null) {
-            mLocationRequest = LocationRequest.create();
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            mLocationRequest.setInterval(10000);
-        }
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(1000);
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, new LocationListener() {
-            @Override
-            public void onLocationChanged(@NonNull @NotNull Location location) {
-                Log.i(TAG, "onLocationChanged: " + location.getLatitude() + ", " + location.getLongitude());
-                mLocation = location;
-                updateWeather();
-            }
-        });
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
+        mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        Log.i(TAG, "LastLocation -> " + mLocation.getLatitude() + ", " + mLocation.getLongitude());
+        updateWeather();
+    }
+
+    private void removeLocationRequestListener() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
     }
 
     @SuppressLint("CheckResult")
-    private void getWeatherByLocation(Location location) {
+    private void fetchWeatherByLocation(Location location) {
         mWeatherApi.getWeatherData(location.getLatitude(), location.getLongitude(), WeatherApi.API_KEY, 40, "metric", "en")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -187,8 +211,13 @@ public class LocationWeatherFragment extends Fragment {
 
                     @Override
                     public void onError(@NotNull Throwable e) {
-                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.e(TAG, e.getMessage(), e);
+                        if (!Utils.isNetworkAvailableAndConnected(getActivity())) {
+                            Log.e(TAG, "No Internet connection", e);
+                            // вивід екрану із повідомленням про відсутність інтернет з'єднання
+                        } else {
+                            Log.e(TAG, e.getMessage(), e);
+                            // вивід екрану із повідомленням, що щось пішло не так
+                        }
                     }
 
                     @Override
@@ -200,7 +229,7 @@ public class LocationWeatherFragment extends Fragment {
 
     private void updateWeather() {
         if (mLocation != null) {
-            getWeatherByLocation(mLocation);
+            fetchWeatherByLocation(mLocation);
         }
     }
 

@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,7 +38,7 @@ public class SearchWeatherFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        getWeatherByCityName("Київ");
+        fetchWeatherByCityName("Київ");
     }
 
     @Nullable
@@ -58,7 +57,7 @@ public class SearchWeatherFragment extends Fragment {
     }
 
     @SuppressLint("CheckResult")
-    private void getWeatherByCityName(String city) {
+    private void fetchWeatherByCityName(String city) {
         mWeatherApi.getWeatherData(city, WeatherApi.API_KEY, 40, "metric", "en")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -71,8 +70,13 @@ public class SearchWeatherFragment extends Fragment {
 
                     @Override
                     public void onError(@NotNull Throwable e) {
-                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.e(TAG, e.getMessage(), e);
+                        if (!Utils.isNetworkAvailableAndConnected(getActivity())) {
+                            Log.e(TAG, "No Internet connection", e);
+                            // вивід екрану із повідомленням про відсутність інтернет з'єднання
+                        } else {
+                            Log.e(TAG, e.getMessage(), e);
+                            // вивід повідомлення що щось пішло не так
+                        }
                     }
 
                     @Override
