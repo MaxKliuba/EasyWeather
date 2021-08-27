@@ -125,7 +125,7 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
     public void onLocationChanged(@NonNull @NotNull Location location) {
         Log.i(TAG, "onLocationChanged() -> " + location.getLatitude() + ", " + location.getLongitude());
         mLocation = location;
-        updateWeather();
+        fetchWeatherByLocation(location);
     }
 
     private boolean isGooglePlayServicesAvailable() {
@@ -198,16 +198,16 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
 
     @SuppressLint("MissingPermission")
     private void registerLocationRequestListener() {
-        mSwipeRefreshLayout.setRefreshing(true);
-
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(1000);
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
         mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        Log.i(TAG, "LastLocation -> " + mLocation.getLatitude() + ", " + mLocation.getLongitude());
-        updateWeather();
+        if (mLocation != null) {
+            Log.i(TAG, "LastLocation -> " + mLocation.getLatitude() + ", " + mLocation.getLongitude());
+            updateWeather();
+        }
     }
 
     private void removeLocationRequestListener() {
@@ -247,6 +247,7 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
 
     private void updateWeather() {
         if (mLocation != null) {
+            mSwipeRefreshLayout.setRefreshing(true);
             fetchWeatherByLocation(mLocation);
         } else {
             mSwipeRefreshLayout.setRefreshing(false);
