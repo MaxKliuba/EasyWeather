@@ -3,6 +3,7 @@ package com.maxclub.android.easyweather;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,8 +14,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -22,6 +25,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.maxclub.android.easyweather.api.WeatherApi;
 import com.maxclub.android.easyweather.data.WeatherData;
 
@@ -45,6 +49,9 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
     private Location mLocation;
     private WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
     private WeatherData mWeatherData;
+
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private Toolbar mToolbar;
     private TextView mTextView;
 
     public static LocationWeatherFragment newInstance() {
@@ -70,8 +77,18 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater,
                              @Nullable @org.jetbrains.annotations.Nullable ViewGroup container,
                              @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.search_weather_fragment, container, false);
+        View view = inflater.inflate(R.layout.weather_fragment, container, false);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.swipe_refresh_layout_color);
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.swipe_refresh_layout_background_color);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateWeather();
+            }
+        });
+        mToolbar = (Toolbar) view.findViewById(R.id.weather_fragment_toolbar);
         mTextView = (TextView) view.findViewById(R.id.weather_textview);
 
         updateUserInterface();
@@ -183,6 +200,8 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
 
     @SuppressLint("MissingPermission")
     private void registerLocationRequestListener() {
+        mSwipeRefreshLayout.setRefreshing(true);
+
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(1000);
@@ -218,11 +237,12 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
                             Log.e(TAG, e.getMessage(), e);
                             // вивід екрану із повідомленням, що щось пішло не так
                         }
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onComplete() {
-
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 });
     }
@@ -235,8 +255,8 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
 
     private void updateUserInterface() {
         if (mWeatherData != null) {
-            mTextView.setText(mWeatherData.getCity().getName()
-                    + " " + mWeatherData.getList().get(0).getMain().getTemp()
+            mToolbar.setSubtitle(mWeatherData.getCity().getName());
+            mTextView.setText(mWeatherData.getList().get(0).getMain().getTemp()
                     + " " + mWeatherData.getList().get(0).getWeather().get(0).getMain());
         }
     }

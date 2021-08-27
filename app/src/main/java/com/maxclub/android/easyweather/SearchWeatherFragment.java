@@ -47,7 +47,7 @@ public class SearchWeatherFragment extends Fragment {
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater,
                              @Nullable @org.jetbrains.annotations.Nullable ViewGroup container,
                              @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.search_weather_fragment, container, false);
+        View view = inflater.inflate(R.layout.weather_fragment, container, false);
 
         mTextView = (TextView) view.findViewById(R.id.weather_textview);
 
