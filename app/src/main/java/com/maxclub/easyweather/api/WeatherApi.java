@@ -1,6 +1,6 @@
-package com.maxclub.android.easyweather.api;
+package com.maxclub.easyweather.api;
 
-import com.maxclub.android.easyweather.data.WeatherData;
+import com.maxclub.easyweather.data.WeatherData;
 
 import io.reactivex.Observable;
 import okhttp3.OkHttpClient;

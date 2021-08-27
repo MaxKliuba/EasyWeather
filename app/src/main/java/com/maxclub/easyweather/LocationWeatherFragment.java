@@ -1,9 +1,8 @@
-package com.maxclub.android.easyweather;
+package com.maxclub.easyweather;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,9 +24,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.material.progressindicator.LinearProgressIndicator;
-import com.maxclub.android.easyweather.api.WeatherApi;
-import com.maxclub.android.easyweather.data.WeatherData;
+import com.maxclub.easyweather.api.WeatherApi;
+import com.maxclub.easyweather.data.WeatherData;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -250,6 +248,8 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
     private void updateWeather() {
         if (mLocation != null) {
             fetchWeatherByLocation(mLocation);
+        } else {
+            mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 

@@ -1,4 +1,4 @@
-package com.maxclub.android.easyweather;
+package com.maxclub.easyweather;
 
 import android.os.Bundle;
 

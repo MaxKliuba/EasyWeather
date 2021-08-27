@@ -1,4 +1,4 @@
-package com.maxclub.android.easyweather;
+package com.maxclub.easyweather;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -12,8 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.maxclub.android.easyweather.api.WeatherApi;
-import com.maxclub.android.easyweather.data.WeatherData;
+import com.maxclub.easyweather.api.WeatherApi;
+import com.maxclub.easyweather.data.WeatherData;
 
 import org.jetbrains.annotations.NotNull;
 

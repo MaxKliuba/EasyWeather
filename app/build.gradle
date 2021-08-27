@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.maxclub.android.easyweather"
+        applicationId "com.maxclub.easyweather"
         minSdkVersion 21
         targetSdkVersion 31
         versionCode 1
