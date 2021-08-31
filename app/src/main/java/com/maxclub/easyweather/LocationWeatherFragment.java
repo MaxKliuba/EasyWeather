@@ -2,18 +2,22 @@ package com.maxclub.easyweather;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -25,12 +29,13 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.maxclub.easyweather.api.WeatherApi;
-import com.maxclub.easyweather.data.WeatherData;
+import com.maxclub.easyweather.api.model.WeatherData;
 
 import org.jetbrains.annotations.NotNull;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.BiConsumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class LocationWeatherFragment extends Fragment implements LocationListener {
@@ -45,12 +50,14 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
 
     private GoogleApiClient mGoogleApiClient;
     private Location mLocation;
+    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     private WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
     private WeatherData mWeatherData;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private Toolbar mToolbar;
     private TextView mTextView;
+
+    private boolean mIsLocationUpdating;
 
     public static LocationWeatherFragment newInstance() {
         return new LocationWeatherFragment();
@@ -60,6 +67,8 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
     public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+
+        setHasOptionsMenu(true);
 
         if (isGooglePlayServicesAvailable()) {
             connectToGoogleApiClient();
@@ -77,6 +86,10 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
                              @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.weather_fragment, container, false);
 
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        activity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24);
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.swipe_refresh_layout_color);
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.swipe_refresh_layout_background_color);
@@ -86,7 +99,7 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
                 updateWeather();
             }
         });
-        mToolbar = (Toolbar) view.findViewById(R.id.weather_fragment_toolbar);
+
         mTextView = (TextView) view.findViewById(R.id.weather_textview);
 
         updateUserInterface();
@@ -116,16 +129,29 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-
+        mCompositeDisposable.dispose();
         disconnectFromGoogleApiClient();
+
+        super.onDestroy();
     }
 
     @Override
-    public void onLocationChanged(@NonNull @NotNull Location location) {
-        Log.i(TAG, "onLocationChanged() -> " + location.getLatitude() + ", " + location.getLongitude());
-        mLocation = location;
-        fetchWeatherByLocation(location);
+    public void onCreateOptionsMenu(@NonNull @NotNull Menu menu, @NonNull @NotNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.location_weather_fragment, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull @NotNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                Intent intent = SearchWeatherActivity.newIntent(getActivity());
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private boolean isGooglePlayServicesAvailable() {
@@ -144,7 +170,9 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
                         public void onConnected(@Nullable @org.jetbrains.annotations.Nullable Bundle bundle) {
                             Log.i(TAG, "GoogleApiClient.onConnected()");
                             if (hasLocationPermission()) {
-                                registerLocationRequestListener();
+                                if (mWeatherData == null) {
+                                    registerLocationRequestListener();
+                                }
                             } else {
                                 requestPermissions(LOCATION_PERMISSION, REQUEST_LOCATION_PERMISSION);
                             }
@@ -191,6 +219,7 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
                 } else {
                     // вивід екрану із повідомленням про необхідність дозволів і кнопкою переходу у налаштування
                 }
+                break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -200,13 +229,18 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
     private void registerLocationRequestListener() {
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(1000);
+        locationRequest.setInterval(10000);
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
-        mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLocation != null) {
-            Log.i(TAG, "LastLocation -> " + mLocation.getLatitude() + ", " + mLocation.getLongitude());
-            updateWeather();
+
+        if (mWeatherData == null) {
+            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (location != null) {
+                Log.i(TAG, "LastLocation -> " + location.getLatitude() + ", " + location.getLongitude());
+                mLocation = location;
+                mIsLocationUpdating = true;
+                fetchWeatherByLocation(location);
+            }
         }
     }
 
@@ -214,51 +248,54 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
     }
 
-    @SuppressLint("CheckResult")
-    private void fetchWeatherByLocation(Location location) {
-        mWeatherApi.getWeatherData(location.getLatitude(), location.getLongitude(), WeatherApi.API_KEY, 40, "metric", "en")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<WeatherData>() {
-                    @Override
-                    public void onNext(@NotNull WeatherData weatherData) {
-                        mWeatherData = weatherData;
-                        updateUserInterface();
-                    }
+    @Override
+    public void onLocationChanged(@NonNull @NotNull Location location) {
+        Log.i(TAG, "onLocationChanged() -> " + location.getLatitude() + ", " + location.getLongitude());
+        mLocation = location;
 
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        if (!Utils.isNetworkAvailableAndConnected(getActivity())) {
-                            Log.e(TAG, "No Internet connection", e);
-                            // вивід екрану із повідомленням про відсутність інтернет з'єднання
-                        } else {
-                            Log.e(TAG, e.getMessage(), e);
-                            // вивід екрану із повідомленням, що щось пішло не так
-                        }
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });
-    }
-
-    private void updateWeather() {
-        if (mLocation != null) {
-            mSwipeRefreshLayout.setRefreshing(true);
-            fetchWeatherByLocation(mLocation);
-        } else {
-            mSwipeRefreshLayout.setRefreshing(false);
+        if (mWeatherData == null || mIsLocationUpdating) {
+            mIsLocationUpdating = false;
+            fetchWeatherByLocation(location);
         }
     }
 
+    @SuppressLint("CheckResult")
+    private void fetchWeatherByLocation(Location location) {
+        mSwipeRefreshLayout.setRefreshing(true);
+
+        mCompositeDisposable.add(mWeatherApi.getWeatherData(location.getLatitude(), location.getLongitude(), 40, "metric", "en")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BiConsumer<WeatherData, Throwable>() {
+                    @Override
+                    public void accept(WeatherData weatherData, Throwable throwable) throws Exception {
+                        mSwipeRefreshLayout.setRefreshing(mIsLocationUpdating);
+
+                        if (throwable != null) {
+                            Log.e(TAG, throwable.getMessage(), throwable);
+                            // вивід екрану із повідомленням, що щось пішло не так
+                        }
+
+                        mWeatherData = weatherData;
+                        updateUserInterface();
+                    }
+                }));
+    }
+
+    private void updateWeather() {
+        fetchWeatherByLocation(mLocation);
+    }
+
     private void updateUserInterface() {
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (mWeatherData != null) {
-            mToolbar.setSubtitle(mWeatherData.getCity().getName());
-            mTextView.setText(mWeatherData.getList().get(0).getMain().getTemp()
+            activity.getSupportActionBar().setSubtitle(mWeatherData.getCity().getName());
+            mTextView.setText(mWeatherData.getCity().getName()
+                    + " " + mWeatherData.getList().get(0).getMain().getTemp()
                     + " " + mWeatherData.getList().get(0).getWeather().get(0).getMain());
+        } else {
+            activity.getSupportActionBar().setSubtitle(null);
+            mTextView.setText(null);
         }
     }
 }

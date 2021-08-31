@@ -1,4 +1,4 @@
-package com.maxclub.easyweather.data;
+package com.maxclub.easyweather.api.model;
 
 import com.google.gson.annotations.SerializedName;
 

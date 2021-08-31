@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EasyWeather">
         <activity
+            android:name=".SearchWeatherActivity"
+            android:exported="false" />
+        <activity
             android:name=".EasyWeatherActivity"
             android:exported="true">
             <intent-filter>
