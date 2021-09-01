@@ -20,6 +20,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.maxclub.easyweather.api.WeatherApi;
 import com.maxclub.easyweather.api.model.WeatherData;
+import com.maxclub.easyweather.database.model.City;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -59,7 +60,7 @@ public class SearchWeatherFragment extends Fragment {
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater,
                              @Nullable @org.jetbrains.annotations.Nullable ViewGroup container,
                              @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.weather_fragment, container, false);
+        View view = inflater.inflate(R.layout.fragment_weather, container, false);
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -135,6 +136,13 @@ public class SearchWeatherFragment extends Fragment {
             case android.R.id.home:
                 getActivity().finish();
                 return true;
+            case R.id.action_add:
+                City city = new City(mWeatherData.getCity().getId(),
+                        mWeatherData.getCity().getName(),
+                        mWeatherData.getCity().getCountry());
+                EasyWeatherApp.getInstance().getCityDao().insert(city);
+                getActivity().finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -178,10 +186,12 @@ public class SearchWeatherFragment extends Fragment {
     private void updateUserInterface() {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (mWeatherData != null) {
-            activity.getSupportActionBar().setSubtitle(mWeatherData.getCity().getName());
-            mTextView.setText(mWeatherData.getCity().getName()
-                    + " " + mWeatherData.getList().get(0).getMain().getTemp()
-                    + " " + mWeatherData.getList().get(0).getWeather().get(0).getMain());
+            activity.getSupportActionBar().setSubtitle(String.format("%s, %s",
+                    mWeatherData.getCity().getName(), mWeatherData.getCity().getCountry()));
+            mTextView.setText(String.format("%s %s %s",
+                    mWeatherData.getCity().getName(),
+                    mWeatherData.getList().get(0).getMain().getTemp(),
+                    mWeatherData.getList().get(0).getWeather().get(0).getMain()));
         } else {
             activity.getSupportActionBar().setSubtitle(null);
             mTextView.setText(null);

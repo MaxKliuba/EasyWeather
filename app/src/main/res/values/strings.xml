@@ -2,5 +2,7 @@
     <string name="app_name">EasyWeather</string>
     <string name="search_city">Search City</string>
     <string name="search_city_query_hint">Enter the city name</string>
-    <string name="add_city">Add this city</string>
+    <string name="add_this_city">Add this city</string>
+    <string name="add_new_city">Add new city</string>
+    <string name="current_location">Current location</string>
 </resources>
