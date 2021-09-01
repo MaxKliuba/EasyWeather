@@ -53,11 +53,11 @@ public class CityListFragment extends Fragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.city_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
 
-        City currentLocation = new City(0, getString(R.string.current_location), "");
+        City currentLocation = new City(0, getString(R.string.current_location), null);
         Adapter adapter = new Adapter();
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
 
         CityViewModel cityViewModel = new ViewModelProvider(this).get(CityViewModel.class);
         cityViewModel.getCityLiveData().observe(getViewLifecycleOwner(), new Observer<List<City>>() {
@@ -156,7 +156,11 @@ public class CityListFragment extends Fragment {
 
             public void bind(City city) {
                 mCity = city;
-                mCityNameTextView.setText(String.format("%s, %s", city.name, city.country));
+                if (city.country != null) {
+                    mCityNameTextView.setText(String.format("%s, %s", city.name, city.country));
+                } else {
+                    mCityNameTextView.setText(city.name);
+                }
             }
         }
     }

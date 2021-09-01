@@ -106,6 +106,7 @@ public class SearchWeatherFragment extends Fragment {
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "QueryTextSubmit: " + query);
                 mQuery = query;
+                mSearchView.clearFocus();
                 fetchWeatherByCityName(query);
 
                 return true;
