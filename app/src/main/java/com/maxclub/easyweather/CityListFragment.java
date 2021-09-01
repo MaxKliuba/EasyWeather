@@ -149,7 +149,13 @@ public class CityListFragment extends Fragment {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        // виклик актівіті із потрібним містом
+                        if (viewType == CURRENT_LOCATION) {
+                            Intent intent = LocationWeatherActivity.newIntent(getActivity());
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                        } else {
+                            //
+                        }
                     }
                 });
             }

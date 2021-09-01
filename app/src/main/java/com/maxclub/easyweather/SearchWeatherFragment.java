@@ -84,9 +84,9 @@ public class SearchWeatherFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        mCompositeDisposable.dispose();
-
         super.onDestroy();
+
+        mCompositeDisposable.dispose();
     }
 
     @Override
@@ -152,6 +152,7 @@ public class SearchWeatherFragment extends Fragment {
     @SuppressLint("CheckResult")
     private void fetchWeatherByCityName(String city) {
         mSwipeRefreshLayout.setRefreshing(true);
+        mCompositeDisposable.clear();
         mCompositeDisposable.add(mWeatherApi.getWeatherData(city, 40, "metric", "en")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -129,10 +129,10 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
+
         mCompositeDisposable.dispose();
         disconnectFromGoogleApiClient();
-
-        super.onDestroy();
     }
 
     @Override
@@ -266,7 +266,7 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
     @SuppressLint("CheckResult")
     private void fetchWeatherByLocation(Location location) {
         mSwipeRefreshLayout.setRefreshing(true);
-
+        mCompositeDisposable.clear();
         mCompositeDisposable.add(mWeatherApi.getWeatherData(location.getLatitude(), location.getLongitude(), 40, "metric", "en")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
