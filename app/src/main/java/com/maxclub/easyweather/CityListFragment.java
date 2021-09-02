@@ -158,6 +158,15 @@ public class CityListFragment extends Fragment {
                         }
                     }
                 });
+
+                itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        EasyWeatherApp.getInstance().getCityDao().delete(mCity);
+
+                        return true;
+                    }
+                });
             }
 
             public void bind(City city) {
