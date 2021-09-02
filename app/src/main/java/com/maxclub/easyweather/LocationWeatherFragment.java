@@ -57,8 +57,6 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mTextView;
 
-    private boolean mIsLocationUpdating;
-
     public static LocationWeatherFragment newInstance() {
         return new LocationWeatherFragment();
     }
@@ -242,7 +240,6 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
             if (location != null) {
                 Log.i(TAG, "LastLocation -> " + location.getLatitude() + ", " + location.getLongitude());
                 mLocation = location;
-                mIsLocationUpdating = true;
                 fetchWeatherByLocation(location);
             }
         }
@@ -257,8 +254,7 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
         Log.i(TAG, "onLocationChanged() -> " + location.getLatitude() + ", " + location.getLongitude());
         mLocation = location;
 
-        if (mWeatherData == null || mIsLocationUpdating) {
-            mIsLocationUpdating = false;
+        if (mWeatherData == null) {
             fetchWeatherByLocation(location);
         }
     }
@@ -273,7 +269,7 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
                 .subscribe(new BiConsumer<WeatherData, Throwable>() {
                     @Override
                     public void accept(WeatherData weatherData, Throwable throwable) throws Exception {
-                        mSwipeRefreshLayout.setRefreshing(mIsLocationUpdating);
+                        mSwipeRefreshLayout.setRefreshing(false);
 
                         if (throwable != null) {
                             Log.e(TAG, throwable.getMessage(), throwable);
