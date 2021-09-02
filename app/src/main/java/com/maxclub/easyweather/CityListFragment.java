@@ -55,7 +55,6 @@ public class CityListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
 
-        City currentLocation = new City(0, getString(R.string.current_location), null);
         Adapter adapter = new Adapter();
         recyclerView.setAdapter(adapter);
 
@@ -64,8 +63,8 @@ public class CityListFragment extends Fragment {
             @Override
             public void onChanged(List<City> cityList) {
                 List<City> list = new ArrayList<>(cityList);
-                list.add(0, currentLocation);
-                adapter.setCityList(list);
+                list.add(0, cityViewModel.getCurrentLocationCity());
+                adapter.setCities(list);
                 adapter.notifyDataSetChanged();
             }
         });
@@ -99,10 +98,10 @@ public class CityListFragment extends Fragment {
         private static final int CURRENT_LOCATION = 0;
         private static final int CITY = 1;
 
-        private List<City> mCityList = new ArrayList<>();
+        private List<City> mCities = new ArrayList<>();
 
-        public void setCityList(List<City> cityList) {
-            mCityList = cityList;
+        public void setCities(List<City> cities) {
+            mCities = cities;
         }
 
         @NonNull
@@ -122,17 +121,17 @@ public class CityListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull @NotNull CityListFragment.Adapter.CityViewHolder holder, int position) {
-            holder.bind(mCityList.get(position));
+            holder.bind(mCities.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return mCityList.size();
+            return mCities.size();
         }
 
         @Override
         public int getItemViewType(int position) {
-            City city = mCityList.get(position);
+            City city = mCities.get(position);
 
             return city.id == 0 ? CURRENT_LOCATION : CITY;
         }
@@ -149,22 +148,9 @@ public class CityListFragment extends Fragment {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (viewType == CURRENT_LOCATION) {
-                            Intent intent = LocationWeatherActivity.newIntent(getActivity());
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                        } else {
-                            //
-                        }
-                    }
-                });
-
-                itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        EasyWeatherApp.getInstance().getCityDao().delete(mCity);
-
-                        return true;
+                        Intent intent = WeatherPagerActivity.newIntent(getActivity(), mCity);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
                     }
                 });
             }

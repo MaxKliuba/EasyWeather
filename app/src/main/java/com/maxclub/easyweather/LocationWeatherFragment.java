@@ -138,6 +138,14 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
         super.onCreateOptionsMenu(menu, inflater);
 
         inflater.inflate(R.menu.location_weather_fragment, menu);
+
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (mWeatherData != null) {
+            activity.getSupportActionBar().setSubtitle(String.format("%s, %s",
+                    mWeatherData.getCity().getName(), mWeatherData.getCity().getCountry()));
+        } else {
+            activity.getSupportActionBar().setSubtitle(null);
+        }
     }
 
     @Override
@@ -287,17 +295,14 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
     }
 
     private void updateUserInterface() {
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (mWeatherData != null) {
-            activity.getSupportActionBar().setSubtitle(String.format("%s, %s",
-                    mWeatherData.getCity().getName(), mWeatherData.getCity().getCountry()));
             mTextView.setText(String.format("%s %s %s",
                     mWeatherData.getCity().getName(),
                     mWeatherData.getList().get(0).getMain().getTemp(),
                     mWeatherData.getList().get(0).getWeather().get(0).getMain()));
         } else {
-            activity.getSupportActionBar().setSubtitle(null);
             mTextView.setText(null);
         }
+        getActivity().invalidateOptionsMenu();
     }
 }
