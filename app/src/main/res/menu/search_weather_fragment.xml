@@ -9,9 +9,9 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_add"
-        android:icon="@drawable/ic_baseline_add_24"
-        android:title="@string/add_this_city"
+        android:id="@+id/action_save"
+        android:icon="@drawable/ic_baseline_save_24"
+        android:title="@string/save_city"
         app:showAsAction="ifRoom" />
 
 </menu>

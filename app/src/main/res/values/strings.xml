@@ -4,6 +4,8 @@
     <string name="search_city">Search city</string>
     <string name="search_city_query_hint">Enter the city name</string>
     <string name="add_new_city">Add new city</string>
-    <string name="add_this_city">Add this city</string>
-    <string name="delete_city">Delete this city</string>
+    <string name="save_city">Save city</string>
+    <string name="delete_city">Delete city</string>
+    <string name="snackbar_delete_text">Item was removed from the list</string>
+    <string name="snackbar_undo_text">UNDO</string>
 </resources>

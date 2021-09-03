@@ -127,8 +127,8 @@ public class SearchWeatherFragment extends Fragment {
             }
         });
 
-        MenuItem addCityMenuItem = menu.findItem(R.id.action_add);
-        addCityMenuItem.setVisible(mWeatherData != null);
+        MenuItem saveCityMenuItem = menu.findItem(R.id.action_save);
+        saveCityMenuItem.setVisible(mWeatherData != null);
     }
 
     @Override
@@ -137,7 +137,7 @@ public class SearchWeatherFragment extends Fragment {
             case android.R.id.home:
                 getActivity().finish();
                 return true;
-            case R.id.action_add:
+            case R.id.action_save:
                 City city = new City(mWeatherData.getCity().getId(),
                         mWeatherData.getCity().getName(),
                         mWeatherData.getCity().getCountry());

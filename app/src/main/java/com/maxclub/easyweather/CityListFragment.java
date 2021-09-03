@@ -1,6 +1,7 @@
 package com.maxclub.easyweather;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,10 +18,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.maxclub.easyweather.database.model.City;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +31,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class CityListFragment extends Fragment {
+
+    RecyclerView mRecyclerView;
+    private Adapter mAdapter;
 
     public static CityListFragment newInstance() {
         return new CityListFragment();
@@ -51,22 +57,24 @@ public class CityListFragment extends Fragment {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        RecyclerView recyclerView = view.findViewById(R.id.city_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.city_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
 
-        Adapter adapter = new Adapter();
-        recyclerView.setAdapter(adapter);
+        mAdapter = new Adapter();
+        mRecyclerView.setAdapter(mAdapter);
 
         CityViewModel cityViewModel = new ViewModelProvider(this).get(CityViewModel.class);
         cityViewModel.getCityLiveData().observe(getViewLifecycleOwner(), new Observer<List<City>>() {
             @Override
             public void onChanged(List<City> cityList) {
-                adapter.setCities(cityList);
-                adapter.getCities().add(cityViewModel.getCurrentLocationCity());
-                adapter.notifyDataSetChanged();
+                mAdapter.setItems(cityList);
+                mAdapter.getItems().add(cityViewModel.getCurrentLocationCity());
+                mAdapter.notifyDataSetChanged();
             }
         });
+
+        enableSwipeToDeleteAndUndo();
 
         return view;
     }
@@ -84,7 +92,7 @@ public class CityListFragment extends Fragment {
             case android.R.id.home:
                 getActivity().finish();
                 return true;
-            case R.id.action_add:
+            case R.id.action_save:
                 Intent SearchWeatherActivityIntent = SearchWeatherActivity.newIntent(getActivity());
                 startActivity(SearchWeatherActivityIntent);
                 return true;
@@ -138,11 +146,11 @@ public class CityListFragment extends Fragment {
             });
         }
 
-        public SortedList<City> getCities() {
+        public SortedList<City> getItems() {
             return mCities;
         }
 
-        public void setCities(List<City> cities) {
+        public void setItems(List<City> cities) {
             mCities.replaceAll(cities);
         }
 
@@ -206,5 +214,31 @@ public class CityListFragment extends Fragment {
                 }
             }
         }
+    }
+
+    private void enableSwipeToDeleteAndUndo() {
+        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(getActivity()) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+                final int position = viewHolder.getAdapterPosition();
+                final City city = mAdapter.getItems().get(position);
+                App.getInstance().getCityDao().delete(city);
+
+                Snackbar snackbar = Snackbar.make(mRecyclerView, getString(R.string.snackbar_delete_text), Snackbar.LENGTH_LONG);
+                snackbar.setAction(getString(R.string.snackbar_undo_text), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        App.getInstance().getCityDao().insert(city);
+                    }
+                });
+                snackbar.getView().setBackgroundColor(getResources().getColor(R.color.grey));
+                snackbar.setTextColor(Color.WHITE);
+                snackbar.setActionTextColor(Color.YELLOW);
+                snackbar.show();
+            }
+        };
+
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
+        itemTouchhelper.attachToRecyclerView(mRecyclerView);
     }
 }
