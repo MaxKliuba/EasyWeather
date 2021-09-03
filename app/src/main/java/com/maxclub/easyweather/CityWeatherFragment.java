@@ -122,7 +122,7 @@ public class CityWeatherFragment extends Fragment {
                 startActivity(SearchWeatherActivityIntent);
                 return true;
             case R.id.action_delete:
-                EasyWeatherApp.getInstance().getCityDao().delete(mCity);
+                App.getInstance().getCityDao().delete(mCity);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

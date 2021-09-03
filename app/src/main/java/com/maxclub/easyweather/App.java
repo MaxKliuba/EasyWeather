@@ -7,9 +7,9 @@ import androidx.room.Room;
 import com.maxclub.easyweather.database.CityDao;
 import com.maxclub.easyweather.database.CityDatabase;
 
-public class EasyWeatherApp extends Application {
+public class App extends Application {
 
-    private static EasyWeatherApp sEasyWeatherApp;
+    private static App sApp;
 
     private CityDatabase mCityDatabase;
     private CityDao mCityDao;
@@ -18,7 +18,7 @@ public class EasyWeatherApp extends Application {
     public void onCreate() {
         super.onCreate();
 
-        sEasyWeatherApp = this;
+        sApp = this;
 
         mCityDatabase = Room.databaseBuilder(getApplicationContext(), CityDatabase.class, "city-db")
                 .allowMainThreadQueries()
@@ -27,8 +27,8 @@ public class EasyWeatherApp extends Application {
         mCityDao = mCityDatabase.cityDao();
     }
 
-    public static EasyWeatherApp getInstance() {
-        return sEasyWeatherApp;
+    public static App getInstance() {
+        return sApp;
     }
 
     public CityDatabase getCityDatabase() {

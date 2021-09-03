@@ -12,13 +12,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.SortedList;
 import androidx.viewpager.widget.ViewPager;
 
 import com.maxclub.easyweather.database.model.City;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class WeatherPagerActivity extends AppCompatActivity {
@@ -26,7 +26,7 @@ public class WeatherPagerActivity extends AppCompatActivity {
     private static final String EXTRA_CITY = "com.maxclub.easyweather.extra_city";
 
     private City mCurrentLocationCity;
-    private List<City> mCities = new ArrayList<>();
+    private SortedList<City> mCities;
     private ViewPager mViewPager;
 
     public static Intent newIntent(Context context, City city) {
@@ -41,6 +41,43 @@ public class WeatherPagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_pager);
 
+        mCities = new SortedList<>(City.class, new SortedList.Callback<City>() {
+            @Override
+            public int compare(City o1, City o2) {
+                return o1.order - o2.order;
+            }
+
+            @Override
+            public void onChanged(int position, int count) {
+                mViewPager.getAdapter().notifyDataSetChanged();
+            }
+
+            @Override
+            public boolean areContentsTheSame(City oldItem, City newItem) {
+                return oldItem.equals(newItem);
+            }
+
+            @Override
+            public boolean areItemsTheSame(City item1, City item2) {
+                return item1.id == item2.id;
+            }
+
+            @Override
+            public void onInserted(int position, int count) {
+                mViewPager.getAdapter().notifyDataSetChanged();
+            }
+
+            @Override
+            public void onRemoved(int position, int count) {
+                mViewPager.getAdapter().notifyDataSetChanged();
+            }
+
+            @Override
+            public void onMoved(int fromPosition, int toPosition) {
+                mViewPager.getAdapter().notifyDataSetChanged();
+            }
+        });
+
         City city = (City) getIntent().getParcelableExtra(EXTRA_CITY);
 
         CityViewModel cityViewModel = new ViewModelProvider(this).get(CityViewModel.class);
@@ -48,8 +85,8 @@ public class WeatherPagerActivity extends AppCompatActivity {
         cityViewModel.getCityLiveData().observe(this, new Observer<List<City>>() {
             @Override
             public void onChanged(List<City> cityList) {
-                mCities = new ArrayList<>(cityList);
-                mCities.add(0, mCurrentLocationCity);
+                mCities.replaceAll(cityList);
+                mCities.add(cityViewModel.getCurrentLocationCity());
                 mViewPager.getAdapter().notifyDataSetChanged();
 
                 for (int i = 0; i < mCities.size(); i++) {

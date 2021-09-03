@@ -141,7 +141,7 @@ public class SearchWeatherFragment extends Fragment {
                 City city = new City(mWeatherData.getCity().getId(),
                         mWeatherData.getCity().getName(),
                         mWeatherData.getCity().getCountry());
-                EasyWeatherApp.getInstance().getCityDao().insert(city);
+                App.getInstance().getCityDao().insert(city);
                 getActivity().finish();
                 return true;
             default:

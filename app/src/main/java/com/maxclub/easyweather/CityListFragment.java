@@ -19,12 +19,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
 import com.maxclub.easyweather.database.model.City;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CityListFragment extends Fragment {
@@ -62,9 +62,8 @@ public class CityListFragment extends Fragment {
         cityViewModel.getCityLiveData().observe(getViewLifecycleOwner(), new Observer<List<City>>() {
             @Override
             public void onChanged(List<City> cityList) {
-                List<City> list = new ArrayList<>(cityList);
-                list.add(0, cityViewModel.getCurrentLocationCity());
-                adapter.setCities(list);
+                adapter.setCities(cityList);
+                adapter.getCities().add(cityViewModel.getCurrentLocationCity());
                 adapter.notifyDataSetChanged();
             }
         });
@@ -98,10 +97,53 @@ public class CityListFragment extends Fragment {
         private static final int CURRENT_LOCATION = 0;
         private static final int CITY = 1;
 
-        private List<City> mCities = new ArrayList<>();
+        private SortedList<City> mCities;
+
+        public Adapter() {
+            mCities = new SortedList<>(City.class, new SortedList.Callback<City>() {
+                @Override
+                public int compare(City o1, City o2) {
+                    return o1.order - o2.order;
+                }
+
+                @Override
+                public void onChanged(int position, int count) {
+                    notifyItemRangeChanged(position, count);
+                }
+
+                @Override
+                public boolean areContentsTheSame(City oldItem, City newItem) {
+                    return oldItem.equals(newItem);
+                }
+
+                @Override
+                public boolean areItemsTheSame(City item1, City item2) {
+                    return item1.id == item2.id;
+                }
+
+                @Override
+                public void onInserted(int position, int count) {
+                    notifyItemRangeChanged(position, count);
+                }
+
+                @Override
+                public void onRemoved(int position, int count) {
+                    notifyItemRangeChanged(position, count);
+                }
+
+                @Override
+                public void onMoved(int fromPosition, int toPosition) {
+                    notifyItemMoved(fromPosition, toPosition);
+                }
+            });
+        }
+
+        public SortedList<City> getCities() {
+            return mCities;
+        }
 
         public void setCities(List<City> cities) {
-            mCities = cities;
+            mCities.replaceAll(cities);
         }
 
         @NonNull

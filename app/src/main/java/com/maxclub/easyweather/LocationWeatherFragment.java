@@ -67,13 +67,6 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
         setRetainInstance(true);
 
         setHasOptionsMenu(true);
-
-        if (isGooglePlayServicesAvailable()) {
-            connectToGoogleApiClient();
-        } else {
-            Log.e(TAG, "Google Play services are not available");
-            // вивід екрану із повідомленням про відсутність google play services
-        }
     }
 
     @Nullable
@@ -114,6 +107,13 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
                 registerLocationRequestListener();
             } else {
                 requestPermissions(LOCATION_PERMISSION, REQUEST_LOCATION_PERMISSION);
+            }
+        } else {
+            if (isGooglePlayServicesAvailable()) {
+                connectToGoogleApiClient();
+            } else {
+                Log.e(TAG, "Google Play services are not available");
+                // вивід екрану із повідомленням про відсутність google play services
             }
         }
     }
@@ -243,13 +243,11 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
 
-        if (mWeatherData == null) {
-            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (location != null) {
-                Log.i(TAG, "LastLocation -> " + location.getLatitude() + ", " + location.getLongitude());
-                mLocation = location;
-                fetchWeatherByLocation(location);
-            }
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (location != null) {
+            Log.i(TAG, "LastLocation -> " + location.getLatitude() + ", " + location.getLongitude());
+            mLocation = location;
+            fetchWeatherByLocation(location);
         }
     }
 
