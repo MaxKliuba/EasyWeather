@@ -2,6 +2,8 @@ package com.maxclub.easyweather;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -73,29 +76,36 @@ public class CityListFragment extends Fragment {
             }
         });
 
-        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(getActivity()) {
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                final int position = viewHolder.getAdapterPosition();
-                final City city = mAdapter.getItems().get(position);
-                App.getInstance().getCityDao().delete(city);
+        ColorDrawable swipeBackground = new ColorDrawable(ContextCompat.getColor(getActivity(), R.color.dark_grey));
+        Drawable deleteIcon = ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_listitem_delete_24);
+        TextDrawable deleteText = new TextDrawable(getResources(), getString(R.string.delete));
 
-                Snackbar snackbar = Snackbar.make(recyclerView, getString(R.string.snackbar_delete_text), Snackbar.LENGTH_LONG);
-                snackbar.setAction(getString(R.string.snackbar_undo_text), new View.OnClickListener() {
+        final ItemTouchHelperSimpleCallback itemTouchHelperCallback =
+                new ItemTouchHelperSimpleCallback(0, ItemTouchHelper.LEFT, swipeBackground, deleteIcon, deleteText) {
                     @Override
-                    public void onClick(View view) {
-                        App.getInstance().getCityDao().insert(city);
+                    public boolean onMove(@NonNull @NotNull RecyclerView recyclerView,
+                                          @NonNull @NotNull RecyclerView.ViewHolder viewHolder,
+                                          @NonNull @NotNull RecyclerView.ViewHolder target) {
+                        return false;
                     }
-                });
-                snackbar.getView().setBackgroundColor(getResources().getColor(R.color.grey));
-                snackbar.setTextColor(Color.WHITE);
-                snackbar.setActionTextColor(Color.YELLOW);
-                snackbar.show();
-            }
-        };
 
-        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
-        itemTouchhelper.attachToRecyclerView(recyclerView);
+                    @Override
+                    public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
+                        mAdapter.removeItem(viewHolder);
+                    }
+
+                    @Override
+                    public int getMovementFlags(@NonNull @NotNull RecyclerView recyclerView,
+                                                @NonNull @NotNull RecyclerView.ViewHolder viewHolder) {
+                        final int position = viewHolder.getAdapterPosition();
+
+                        return makeMovementFlags(0, recyclerView.getAdapter().getItemViewType(position) == 0
+                                ? 0 : ItemTouchHelper.LEFT);
+                    }
+                };
+
+        final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchHelperCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         return view;
     }
@@ -123,8 +133,8 @@ public class CityListFragment extends Fragment {
     }
 
     private class Adapter extends RecyclerView.Adapter<Adapter.CityViewHolder> {
-        private static final int CURRENT_LOCATION = 0;
-        private static final int CITY = 1;
+        public static final int CURRENT_LOCATION = 0;
+        public static final int CITY = 1;
 
         private SortedList<City> mCities;
 
@@ -173,6 +183,25 @@ public class CityListFragment extends Fragment {
 
         public void setItems(List<City> cities) {
             mCities.replaceAll(cities);
+        }
+
+        public void removeItem(RecyclerView.ViewHolder viewHolder) {
+            final int position = viewHolder.getAdapterPosition();
+            final City city = mAdapter.getItems().get(position);
+            App.getInstance().getCityDao().delete(city);
+
+            final Snackbar snackbar = Snackbar.make(viewHolder.itemView,
+                    getString(R.string.snackbar_delete_text), Snackbar.LENGTH_LONG)
+                    .setAction(getString(R.string.snackbar_undo_text), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            App.getInstance().getCityDao().insert(city);
+                        }
+                    })
+                    .setTextColor(Color.WHITE)
+                    .setActionTextColor(Color.YELLOW);
+            snackbar.getView().setBackgroundColor(getResources().getColor(R.color.snackbar_background_color));
+            snackbar.show();
         }
 
         @NonNull

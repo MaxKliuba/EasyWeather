@@ -6,6 +6,7 @@
     <string name="add_new_city">Add new city</string>
     <string name="save_city">Save city</string>
     <string name="delete_city">Delete city</string>
+    <string name="delete">DELETE</string>
     <string name="snackbar_delete_text">Item was removed from the list</string>
     <string name="snackbar_undo_text">UNDO</string>
 </resources>
