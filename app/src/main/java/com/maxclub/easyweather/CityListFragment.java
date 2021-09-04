@@ -32,7 +32,6 @@ import java.util.List;
 
 public class CityListFragment extends Fragment {
 
-    RecyclerView mRecyclerView;
     private Adapter mAdapter;
 
     public static CityListFragment newInstance() {
@@ -57,12 +56,12 @@ public class CityListFragment extends Fragment {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.city_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.city_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
 
         mAdapter = new Adapter();
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
 
         CityViewModel cityViewModel = new ViewModelProvider(this).get(CityViewModel.class);
         cityViewModel.getCityLiveData().observe(getViewLifecycleOwner(), new Observer<List<City>>() {
@@ -74,7 +73,29 @@ public class CityListFragment extends Fragment {
             }
         });
 
-        enableSwipeToDeleteAndUndo();
+        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(getActivity()) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+                final int position = viewHolder.getAdapterPosition();
+                final City city = mAdapter.getItems().get(position);
+                App.getInstance().getCityDao().delete(city);
+
+                Snackbar snackbar = Snackbar.make(recyclerView, getString(R.string.snackbar_delete_text), Snackbar.LENGTH_LONG);
+                snackbar.setAction(getString(R.string.snackbar_undo_text), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        App.getInstance().getCityDao().insert(city);
+                    }
+                });
+                snackbar.getView().setBackgroundColor(getResources().getColor(R.color.grey));
+                snackbar.setTextColor(Color.WHITE);
+                snackbar.setActionTextColor(Color.YELLOW);
+                snackbar.show();
+            }
+        };
+
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
+        itemTouchhelper.attachToRecyclerView(recyclerView);
 
         return view;
     }
@@ -131,12 +152,12 @@ public class CityListFragment extends Fragment {
 
                 @Override
                 public void onInserted(int position, int count) {
-                    notifyItemRangeChanged(position, count);
+                    notifyItemRangeInserted(position, count);
                 }
 
                 @Override
                 public void onRemoved(int position, int count) {
-                    notifyItemRangeChanged(position, count);
+                    notifyItemRangeRemoved(position, count);
                 }
 
                 @Override
@@ -214,31 +235,5 @@ public class CityListFragment extends Fragment {
                 }
             }
         }
-    }
-
-    private void enableSwipeToDeleteAndUndo() {
-        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(getActivity()) {
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                final int position = viewHolder.getAdapterPosition();
-                final City city = mAdapter.getItems().get(position);
-                App.getInstance().getCityDao().delete(city);
-
-                Snackbar snackbar = Snackbar.make(mRecyclerView, getString(R.string.snackbar_delete_text), Snackbar.LENGTH_LONG);
-                snackbar.setAction(getString(R.string.snackbar_undo_text), new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        App.getInstance().getCityDao().insert(city);
-                    }
-                });
-                snackbar.getView().setBackgroundColor(getResources().getColor(R.color.grey));
-                snackbar.setTextColor(Color.WHITE);
-                snackbar.setActionTextColor(Color.YELLOW);
-                snackbar.show();
-            }
-        };
-
-        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
-        itemTouchhelper.attachToRecyclerView(mRecyclerView);
     }
 }
