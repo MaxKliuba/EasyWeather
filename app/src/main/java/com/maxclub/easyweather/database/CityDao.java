@@ -23,7 +23,7 @@ public interface CityDao {
     @Query("SELECT * FROM City WHERE id = :id LIMIT 1")
     City findById(int id);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(City city);
 
     @Update
