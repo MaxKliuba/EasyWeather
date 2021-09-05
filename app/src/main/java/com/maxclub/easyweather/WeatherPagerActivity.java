@@ -25,7 +25,6 @@ public class WeatherPagerActivity extends AppCompatActivity {
 
     private static final String EXTRA_CITY = "com.maxclub.easyweather.extra_city";
 
-    private City mCurrentLocationCity;
     private SortedList<City> mCities;
     private ViewPager mViewPager;
 
@@ -81,12 +80,10 @@ public class WeatherPagerActivity extends AppCompatActivity {
         City city = (City) getIntent().getParcelableExtra(EXTRA_CITY);
 
         CityViewModel cityViewModel = new ViewModelProvider(this).get(CityViewModel.class);
-        mCurrentLocationCity = cityViewModel.getCurrentLocationCity();
         cityViewModel.getCityLiveData().observe(this, new Observer<List<City>>() {
             @Override
             public void onChanged(List<City> cityList) {
                 mCities.replaceAll(cityList);
-                mCities.add(cityViewModel.getCurrentLocationCity());
                 mViewPager.getAdapter().notifyDataSetChanged();
 
                 for (int i = 0; i < mCities.size(); i++) {
@@ -108,7 +105,7 @@ public class WeatherPagerActivity extends AppCompatActivity {
             public Fragment getItem(int position) {
                 City city = mCities.get(position);
 
-                if (city.equals(mCurrentLocationCity)) {
+                if (city.id == 0) {
                     return LocationWeatherFragment.newInstance();
                 } else {
                     return CityWeatherFragment.newInstance(city);

@@ -28,6 +28,8 @@ import androidx.recyclerview.widget.SortedList;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.maxclub.easyweather.database.model.City;
+import com.maxclub.easyweather.utils.ItemTouchHelperSimpleCallback;
+import com.maxclub.easyweather.utils.TextDrawable;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -71,7 +73,6 @@ public class CityListFragment extends Fragment {
             @Override
             public void onChanged(List<City> cityList) {
                 mAdapter.setItems(cityList);
-                mAdapter.getItems().add(cityViewModel.getCurrentLocationCity());
                 mAdapter.notifyDataSetChanged();
             }
         });

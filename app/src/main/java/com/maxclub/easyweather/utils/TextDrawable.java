@@ -1,4 +1,4 @@
-package com.maxclub.easyweather;
+package com.maxclub.easyweather.utils;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 
@@ -23,6 +24,8 @@ public class TextDrawable extends Drawable {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         setColor(mColor);
         mPaint.setTextAlign(Paint.Align.CENTER);
+        Typeface typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD);
+        mPaint.setTypeface(typeface);
         setTextSize(mTextSize);
     }
 

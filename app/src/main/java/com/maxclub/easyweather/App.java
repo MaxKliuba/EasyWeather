@@ -6,6 +6,7 @@ import androidx.room.Room;
 
 import com.maxclub.easyweather.database.CityDao;
 import com.maxclub.easyweather.database.CityDatabase;
+import com.maxclub.easyweather.database.model.City;
 
 public class App extends Application {
 
@@ -25,6 +26,9 @@ public class App extends Application {
                 .build();
 
         mCityDao = mCityDatabase.cityDao();
+
+        City currentLocationCity = new City(0, 0, getString(R.string.current_location), null);
+        mCityDao.insert(currentLocationCity);
     }
 
     public static App getInstance() {

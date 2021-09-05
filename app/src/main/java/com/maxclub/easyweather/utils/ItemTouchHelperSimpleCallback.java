@@ -1,4 +1,4 @@
-package com.maxclub.easyweather;
+package com.maxclub.easyweather.utils;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -9,6 +9,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.maxclub.easyweather.utils.TextDrawable;
 
 import org.jetbrains.annotations.NotNull;
 

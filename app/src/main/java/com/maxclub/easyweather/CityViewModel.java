@@ -9,13 +9,8 @@ import java.util.List;
 
 public class CityViewModel extends ViewModel {
     private final LiveData<List<City>> mCityLiveData = App.getInstance().getCityDao().getAllLiveData();
-    private final City mCurrentLocationCity = new City(-1, 0, App.getInstance().getString(R.string.current_location), null);
 
     public LiveData<List<City>> getCityLiveData() {
         return mCityLiveData;
-    }
-
-    public City getCurrentLocationCity() {
-        return mCurrentLocationCity;
     }
 }
