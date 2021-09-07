@@ -192,6 +192,7 @@ public class SearchWeatherFragment extends Fragment {
             public boolean onClose() {
                 Log.d(TAG, "SearchView.setOnCloseListener -> onClose");
                 mIsSearchViewIconified = true;
+                mEditableQuery = mQuery;
                 return false;
             }
         });
