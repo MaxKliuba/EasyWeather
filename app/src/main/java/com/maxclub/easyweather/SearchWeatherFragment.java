@@ -173,7 +173,7 @@ public class SearchWeatherFragment extends Fragment {
                 mIsSearchViewIconified = true;
                 fetchWeatherByCityName(query);
 
-                return true;
+                return false;
             }
 
             @Override
@@ -193,6 +193,7 @@ public class SearchWeatherFragment extends Fragment {
                 Log.d(TAG, "SearchView.setOnCloseListener -> onClose");
                 mIsSearchViewIconified = true;
                 mEditableQuery = mQuery;
+
                 return false;
             }
         });
@@ -239,6 +240,7 @@ public class SearchWeatherFragment extends Fragment {
                             mSearchView.onActionViewCollapsed();
                             mIsSearchViewOnActionViewCollapsed = false;
                         }
+                        getActivity().invalidateOptionsMenu();
 
                         if (throwable != null) {
                             Log.e(TAG, throwable.getMessage(), throwable);
