@@ -9,4 +9,11 @@
     <string name="delete">DELETE</string>
     <string name="snackbar_delete_text">Item was removed from the list</string>
     <string name="snackbar_undo_text">UNDO</string>
+    <string name="google_play_services_not_found">Google Play services keeps stopping</string>
+    <string name="permission_text">Please allow this application to access this device\'s location</string>
+    <string name="permission_text_2">The app will only have access to the location while you\'re usingthe app</string>
+    <string name="settings_button">Settings</string>
+    <string name="connection_error_text">Network request failed</string>
+    <string name="retry_button">Retry</string>
+    <string name="waiting_for_data">Waiting for data...</string>
 </resources>

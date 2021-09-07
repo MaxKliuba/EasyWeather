@@ -77,7 +77,7 @@ public class CityListFragment extends Fragment {
             }
         });
 
-        ColorDrawable swipeBackground = new ColorDrawable(ContextCompat.getColor(getActivity(), R.color.dark_grey));
+        ColorDrawable swipeBackground = new ColorDrawable(ContextCompat.getColor(getActivity(), R.color.dark_gray));
         Drawable deleteIcon = ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_listitem_delete_24);
         TextDrawable deleteText = new TextDrawable(getResources(), getString(R.string.delete));
 

@@ -6,34 +6,71 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <include
+            android:id="@+id/google_play_services_not_found_view_container"
+            layout="@layout/layout_google_play_services_not_found"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:visibility="gone" />
 
-            <androidx.cardview.widget.CardView
+        <include
+            android:id="@+id/permission_view_container"
+            layout="@layout/layout_permission"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/connection_error_view_container"
+            layout="@layout/layout_connection_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/waiting_for_data_view_container"
+            layout="@layout/layout_waiting_for_data"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <ScrollView
+            android:id="@+id/main_content_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="?attr/colorSurface"
-                app:cardCornerRadius="16dp">
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/weather_textview"
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    tools:text="@string/app_name" />
+                    android:layout_margin="8dp"
+                    app:cardBackgroundColor="?attr/colorSurface"
+                    app:cardCornerRadius="16dp">
 
-            </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:id="@+id/weather_textview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        tools:text="@string/app_name" />
 
-        </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-    </ScrollView>
+            </LinearLayout>
+
+        </ScrollView>
+
+    </FrameLayout>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

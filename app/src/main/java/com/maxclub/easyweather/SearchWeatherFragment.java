@@ -9,6 +9,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,11 +20,15 @@ import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.maxclub.easyweather.api.WeatherApi;
 import com.maxclub.easyweather.api.model.WeatherData;
 import com.maxclub.easyweather.database.model.City;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -36,11 +42,19 @@ public class SearchWeatherFragment extends Fragment {
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     private WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
     private WeatherData mWeatherData;
-    private String mQuery = "";
+    private String mEditableQuery;
+    private String mQuery;
+
+    private View mConnectionErrorContainer;
+    private View mWaitingForDataViewContainer;
+    private View mMainContentContainer;
+    private List<View> mViewContainers = new ArrayList<>();
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private SearchView mSearchView;
     private TextView mTextView;
+    private boolean mIsSearchViewIconified = false;
+    private boolean mIsSearchViewOnActionViewCollapsed = false;
 
     public static SearchWeatherFragment newInstance() {
         return new SearchWeatherFragment();
@@ -65,6 +79,36 @@ public class SearchWeatherFragment extends Fragment {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mConnectionErrorContainer = (View) view.findViewById(R.id.connection_error_view_container);
+        mConnectionErrorContainer.setVisibility(View.GONE);
+        ImageView connectingErrorImageView = (ImageView) view.findViewById(R.id.connection_error_image_view);
+        Glide.with(getActivity())
+                .asGif()
+                .load(R.raw.gif_connection_error)
+                .into(connectingErrorImageView);
+        Button retryButton = (Button) view.findViewById(R.id.retry_button);
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateWeather();
+            }
+        });
+
+        mWaitingForDataViewContainer = (View) view.findViewById(R.id.waiting_for_data_view_container);
+        mWaitingForDataViewContainer.setVisibility(View.GONE);
+        ImageView loadingViewImageView = (ImageView) view.findViewById(R.id.waiting_for_data_image_view);
+        Glide.with(getActivity())
+                .asGif()
+                .load(R.raw.gif_waiting_for_data)
+                .into(loadingViewImageView);
+
+        mMainContentContainer = (View) view.findViewById(R.id.main_content_container);
+        mMainContentContainer.setVisibility(View.GONE);
+
+        mViewContainers.add(mConnectionErrorContainer);
+        mViewContainers.add(mWaitingForDataViewContainer);
+        mViewContainers.add(mMainContentContainer);
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.swipe_refresh_layout_color);
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.swipe_refresh_layout_background_color);
@@ -77,7 +121,11 @@ public class SearchWeatherFragment extends Fragment {
 
         mTextView = (TextView) view.findViewById(R.id.weather_textview);
 
-        updateUserInterface();
+        if (mWeatherData == null) {
+            updateWeather();
+        } else {
+            updateUserInterface();
+        }
 
         return view;
     }
@@ -93,20 +141,36 @@ public class SearchWeatherFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull @NotNull Menu menu, @NonNull @NotNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
+        Log.d(TAG, "onCreateOptionsMenu: mQuery = " + mQuery);
+        Log.d(TAG, "onCreateOptionsMenu: mIsSearchViewIconified = " + mIsSearchViewIconified);
+
         inflater.inflate(R.menu.search_weather_fragment, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search_view);
         mSearchView = (SearchView) searchItem.getActionView();
         mSearchView.setQueryHint(getString(R.string.search_city_query_hint));
-        mSearchView.setQuery(mQuery, false);
-        mSearchView.setIconified(mQuery == null);
+        mSearchView.setQuery(mEditableQuery, false);
+        mSearchView.setIconified(mIsSearchViewIconified);
+        if (mIsSearchViewIconified) {
+            mSearchView.clearFocus();
+        }
 
+        mSearchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "SearchView.setOnSearchClickListener -> onClick");
+                mIsSearchViewIconified = false;
+                mSearchView.setQuery(mEditableQuery, false);
+            }
+        });
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d(TAG, "QueryTextSubmit: " + query);
+                Log.d(TAG, "onQueryTextSubmit: " + query);
                 mQuery = query;
+                mEditableQuery = query;
                 mSearchView.clearFocus();
+                mIsSearchViewIconified = true;
                 fetchWeatherByCityName(query);
 
                 return true;
@@ -114,8 +178,11 @@ public class SearchWeatherFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d(TAG, "QueryTextChange: " + newText);
-                mQuery = newText;
+                Log.d(TAG, "onQueryTextChange: " + newText);
+                if (!mIsSearchViewOnActionViewCollapsed) {
+                    mEditableQuery = newText;
+                    mIsSearchViewIconified = false;
+                }
 
                 return false;
             }
@@ -123,6 +190,8 @@ public class SearchWeatherFragment extends Fragment {
         mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                Log.d(TAG, "SearchView.setOnCloseListener -> onClose");
+                mIsSearchViewIconified = true;
                 return false;
             }
         });
@@ -161,23 +230,28 @@ public class SearchWeatherFragment extends Fragment {
                     public void accept(WeatherData weatherData, Throwable throwable) throws Exception {
                         mSwipeRefreshLayout.setRefreshing(false);
 
-                        if (throwable != null) {
-                            Log.e(TAG, throwable.getMessage(), throwable);
-                            // вивід екрану із повідомленням, що щось пішло не так
-                        }
-
                         mWeatherData = weatherData;
                         updateUserInterface();
 
-                        if (mSearchView != null) {
+                        if (mSearchView != null && mIsSearchViewIconified) {
+                            mIsSearchViewOnActionViewCollapsed = true;
                             mSearchView.onActionViewCollapsed();
-                            mQuery = null;
+                            mIsSearchViewOnActionViewCollapsed = false;
+                        }
+
+                        if (throwable != null) {
+                            Log.e(TAG, throwable.getMessage(), throwable);
+                            setViewContainerVisible(mConnectionErrorContainer);
                         }
                     }
                 }));
     }
 
     private void updateWeather() {
+        if (mWeatherData == null) {
+            setViewContainerVisible(mWaitingForDataViewContainer);
+        }
+
         if (mQuery != null) {
             fetchWeatherByCityName(mQuery);
         } else {
@@ -187,6 +261,7 @@ public class SearchWeatherFragment extends Fragment {
 
     private void updateUserInterface() {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
+
         if (mWeatherData != null) {
             activity.getSupportActionBar().setSubtitle(String.format("%s, %s",
                     mWeatherData.getCity().getName(), mWeatherData.getCity().getCountry()));
@@ -194,11 +269,20 @@ public class SearchWeatherFragment extends Fragment {
                     mWeatherData.getCity().getName(),
                     mWeatherData.getList().get(0).getMain().getTemp(),
                     mWeatherData.getList().get(0).getWeather().get(0).getMain()));
+
+            setViewContainerVisible(mMainContentContainer);
         } else {
             activity.getSupportActionBar().setSubtitle(null);
-            mTextView.setText(null);
         }
+    }
 
-        getActivity().invalidateOptionsMenu();
+    private void setViewContainerVisible(View viewContainer) {
+        for (View container : mViewContainers) {
+            if (container.equals(viewContainer)) {
+                container.setVisibility(View.VISIBLE);
+            } else {
+                container.setVisibility(View.GONE);
+            }
+        }
     }
 }
