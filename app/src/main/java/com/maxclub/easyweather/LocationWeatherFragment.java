@@ -2,11 +2,14 @@ package com.maxclub.easyweather;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,10 +32,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.maxclub.easyweather.api.WeatherApi;
 import com.maxclub.easyweather.api.model.WeatherData;
 
@@ -46,7 +51,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.BiConsumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class LocationWeatherFragment extends Fragment implements LocationListener {
+public class LocationWeatherFragment extends Fragment {
 
     private static final String TAG = "LocationWeatherFragment";
 
@@ -56,14 +61,17 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
     };
     private static final int REQUEST_LOCATION_PERMISSION = 0;
 
-    private GoogleApiClient mGoogleApiClient;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private LocationCallback mLocationCallback;
     private Location mLocation;
+    private boolean mIsLocationUpdatesRegistered = false;
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     private WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
     private WeatherData mWeatherData;
 
     private View mGooglePlayServicesNotFoundViewContainer;
     private View mPermissionViewContainer;
+    private View mLocationEnablingContainer;
     private View mConnectionErrorContainer;
     private View mWaitingForDataViewContainer;
     private View mMainContentContainer;
@@ -125,6 +133,23 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
             }
         });
 
+        mLocationEnablingContainer = (View) view.findViewById(R.id.location_enabling_view_container);
+        mLocationEnablingContainer.setVisibility(View.GONE);
+        ImageView locationEnablingImageView = (ImageView) view.findViewById(R.id.location_enabling_image_view);
+        Glide.with(getActivity())
+                .asGif()
+                .load(R.raw.gif_permission)
+                .into(locationEnablingImageView);
+        Button locationEnablingButton = (Button) view.findViewById(R.id.location_enabling_button);
+        locationEnablingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+
         mConnectionErrorContainer = (View) view.findViewById(R.id.connection_error_view_container);
         mConnectionErrorContainer.setVisibility(View.GONE);
         ImageView connectingErrorImageView = (ImageView) view.findViewById(R.id.connection_error_image_view);
@@ -153,6 +178,7 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
 
         mViewContainers.add(mGooglePlayServicesNotFoundViewContainer);
         mViewContainers.add(mPermissionViewContainer);
+        mViewContainers.add(mLocationEnablingContainer);
         mViewContainers.add(mConnectionErrorContainer);
         mViewContainers.add(mWaitingForDataViewContainer);
         mViewContainers.add(mMainContentContainer);
@@ -178,20 +204,16 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
     public void onStart() {
         super.onStart();
 
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            if (hasLocationPermission()) {
-                registerLocationRequestListener();
+        if (hasLocationPermission()) {
+            if (isLocationEnabled()) {
+
+                createLocationClient();
             } else {
-                setViewContainerVisible(mPermissionViewContainer);
-                requestPermissions(LOCATION_PERMISSION, REQUEST_LOCATION_PERMISSION);
+                setViewContainerVisible(mLocationEnablingContainer);
             }
         } else {
-            if (isGooglePlayServicesAvailable()) {
-                connectToGoogleApiClient();
-            } else {
-                Log.e(TAG, "Google Play services are not available");
-                setViewContainerVisible(mGooglePlayServicesNotFoundViewContainer);
-            }
+            setViewContainerVisible(mPermissionViewContainer);
+            requestPermissions(LOCATION_PERMISSION, REQUEST_LOCATION_PERMISSION);
         }
     }
 
@@ -199,7 +221,9 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
     public void onStop() {
         super.onStop();
 
-        removeLocationRequestListener();
+        if (mIsLocationUpdatesRegistered) {
+            stopLocationUpdates();
+        }
     }
 
     @Override
@@ -207,7 +231,6 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
         super.onDestroy();
 
         mCompositeDisposable.dispose();
-        disconnectFromGoogleApiClient();
     }
 
     @Override
@@ -248,47 +271,6 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
         return errorCode == ConnectionResult.SUCCESS;
     }
 
-    private void connectToGoogleApiClient() {
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                    .addApi(LocationServices.API)
-                    .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                        @Override
-                        public void onConnected(@Nullable @org.jetbrains.annotations.Nullable Bundle bundle) {
-                            Log.i(TAG, "GoogleApiClient.onConnected()");
-                            if (hasLocationPermission()) {
-                                registerLocationRequestListener();
-                            } else {
-                                setViewContainerVisible(mPermissionViewContainer);
-                                requestPermissions(LOCATION_PERMISSION, REQUEST_LOCATION_PERMISSION);
-                            }
-                        }
-
-                        @Override
-                        public void onConnectionSuspended(int i) {
-
-                        }
-                    })
-                    .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                        @Override
-                        public void onConnectionFailed(@NonNull @NotNull ConnectionResult connectionResult) {
-                            Log.e(TAG, "GoogleApiClient connection error");
-                            setViewContainerVisible(mGooglePlayServicesNotFoundViewContainer);
-                        }
-                    })
-                    .build();
-
-        }
-
-        mGoogleApiClient.connect();
-    }
-
-    private void disconnectFromGoogleApiClient() {
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.disconnect();
-        }
-    }
-
     private boolean hasLocationPermission() {
         int result = ContextCompat.checkSelfPermission(getActivity(), LOCATION_PERMISSION[0]);
 
@@ -302,7 +284,11 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
         switch (requestCode) {
             case REQUEST_LOCATION_PERMISSION:
                 if (hasLocationPermission()) {
-                    registerLocationRequestListener();
+                    if (isLocationEnabled()) {
+                        createLocationClient();
+                    } else {
+                        setViewContainerVisible(mLocationEnablingContainer);
+                    }
                 } else {
                     setViewContainerVisible(mPermissionViewContainer);
                 }
@@ -313,33 +299,65 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
     }
 
     @SuppressLint("MissingPermission")
-    private void registerLocationRequestListener() {
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(10000);
+    private void createLocationClient() {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            Log.i(TAG, "getLastLocation() -> " + location.getLatitude() + ", " + location.getLongitude());
+                            mLocation = location;
+                            updateWeather();
+                        } else {
+                            Log.i(TAG, "getLastLocation() -> null");
+                        }
+                    }
+                });
 
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location != null) {
-            Log.i(TAG, "LastLocation -> " + location.getLatitude() + ", " + location.getLongitude());
-            mLocation = location;
-            updateWeather();
-        }
+        startLocationUpdates();
     }
 
-    private void removeLocationRequestListener() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+    @SuppressLint("MissingPermission")
+    private void startLocationUpdates() {
+        LocationRequest locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10000);
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    Log.i(TAG, "onLocationResult() -> null");
+
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    Log.i(TAG, "onLocationChanged() -> " + location.getLatitude() + ", " + location.getLongitude());
+                    mLocation = location;
+
+                    if (mWeatherData == null) {
+                        fetchWeatherByLocation(mLocation);
+                    }
+                }
+            }
+        };
+
+        mFusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.getMainLooper());
+        mIsLocationUpdatesRegistered = true;
     }
 
-    @Override
-    public void onLocationChanged(@NonNull @NotNull Location location) {
-        Log.i(TAG, "onLocationChanged() -> " + location.getLatitude() + ", " + location.getLongitude());
-        mLocation = location;
+    private void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        mIsLocationUpdatesRegistered = false;
+    }
 
-        if (mWeatherData == null) {
-            fetchWeatherByLocation(mLocation);
-        }
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
     @SuppressLint("CheckResult")
@@ -367,17 +385,27 @@ public class LocationWeatherFragment extends Fragment implements LocationListene
 
     private void updateWeather() {
         if (hasLocationPermission()) {
-            if (mWeatherData == null) {
-                setViewContainerVisible(mWaitingForDataViewContainer);
-            }
+            if (isLocationEnabled()) {
+                if (mWeatherData == null) {
+                    setViewContainerVisible(mWaitingForDataViewContainer);
+                }
 
-            if (mLocation != null) {
-                fetchWeatherByLocation(mLocation);
+                if (mLocation != null) {
+                    fetchWeatherByLocation(mLocation);
+                } else {
+                    if (!mIsLocationUpdatesRegistered) {
+                        createLocationClient();
+                    } else {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        setViewContainerVisible(mConnectionErrorContainer);
+                    }
+                }
             } else {
+                setViewContainerVisible(mLocationEnablingContainer);
                 mSwipeRefreshLayout.setRefreshing(false);
-                setViewContainerVisible(mConnectionErrorContainer);
             }
         } else {
+            setViewContainerVisible(mPermissionViewContainer);
             mSwipeRefreshLayout.setRefreshing(false);
         }
     }

@@ -141,9 +141,6 @@ public class SearchWeatherFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull @NotNull Menu menu, @NonNull @NotNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
-        Log.d(TAG, "onCreateOptionsMenu: mQuery = " + mQuery);
-        Log.d(TAG, "onCreateOptionsMenu: mIsSearchViewIconified = " + mIsSearchViewIconified);
-
         inflater.inflate(R.menu.search_weather_fragment, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search_view);
@@ -158,7 +155,7 @@ public class SearchWeatherFragment extends Fragment {
         mSearchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "SearchView.setOnSearchClickListener -> onClick");
+                Log.d(TAG, "SearchView.setOnSearchClickListener() -> onClick()");
                 mIsSearchViewIconified = false;
                 mSearchView.setQuery(mEditableQuery, false);
             }
@@ -166,7 +163,7 @@ public class SearchWeatherFragment extends Fragment {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d(TAG, "onQueryTextSubmit: " + query);
+                Log.d(TAG, "onQueryTextSubmit() -> " + query);
                 mQuery = query;
                 mEditableQuery = query;
                 mSearchView.clearFocus();
@@ -178,7 +175,7 @@ public class SearchWeatherFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d(TAG, "onQueryTextChange: " + newText);
+                Log.d(TAG, "onQueryTextChange() -> " + newText);
                 if (!mIsSearchViewOnActionViewCollapsed) {
                     mEditableQuery = newText;
                     mIsSearchViewIconified = false;
@@ -190,7 +187,7 @@ public class SearchWeatherFragment extends Fragment {
         mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                Log.d(TAG, "SearchView.setOnCloseListener -> onClose");
+                Log.d(TAG, "SearchView.setOnCloseListener() -> onClose()");
                 mIsSearchViewIconified = true;
                 mEditableQuery = mQuery;
 

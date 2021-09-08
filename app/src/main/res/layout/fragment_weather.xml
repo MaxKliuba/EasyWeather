@@ -25,6 +25,13 @@
             android:visibility="gone" />
 
         <include
+            android:id="@+id/location_enabling_view_container"
+            layout="@layout/layout_location_enabling"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <include
             android:id="@+id/connection_error_view_container"
             layout="@layout/layout_connection_error"
             android:layout_width="match_parent"
