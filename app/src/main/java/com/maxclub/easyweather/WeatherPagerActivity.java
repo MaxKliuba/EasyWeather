@@ -56,13 +56,13 @@ public class WeatherPagerActivity extends AppCompatActivity {
                 mFragmentAdapter.notifyDataSetChanged();
 
                 if (mFirstUpdate) {
-                    mFirstUpdate = false;
                     for (int i = 0; i < mFragmentAdapter.getItemCount(); i++) {
                         if (mFragmentAdapter.getItems().get(i).equals(city)) {
-                            mViewPager.setCurrentItem(i);
+                            mViewPager.setCurrentItem(i, false);
                             break;
                         }
                     }
+                    mFirstUpdate = false;
                 }
             }
         });
@@ -98,6 +98,7 @@ public class WeatherPagerActivity extends AppCompatActivity {
                 @Override
                 public void onInserted(int position, int count) {
                     mViewPager.getAdapter().notifyItemRangeInserted(position, count);
+                    mViewPager.setCurrentItem(position, false);
                 }
 
                 @Override

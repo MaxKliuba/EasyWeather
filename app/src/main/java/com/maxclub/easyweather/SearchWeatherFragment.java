@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.maxclub.easyweather.api.WeatherApi;
 import com.maxclub.easyweather.api.model.WeatherData;
 import com.maxclub.easyweather.database.model.City;
+import com.maxclub.easyweather.utils.Utils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -241,7 +242,7 @@ public class SearchWeatherFragment extends Fragment {
 
                         if (throwable != null) {
                             Log.e(TAG, throwable.getMessage(), throwable);
-                            setViewContainerVisible(mConnectionErrorContainer);
+                            Utils.switchView(mConnectionErrorContainer, mViewContainers);
                         }
                     }
                 }));
@@ -249,7 +250,7 @@ public class SearchWeatherFragment extends Fragment {
 
     private void updateWeather() {
         if (mWeatherData == null) {
-            setViewContainerVisible(mWaitingForDataViewContainer);
+            Utils.switchView(mWaitingForDataViewContainer, mViewContainers);
         }
 
         if (mQuery != null) {
@@ -270,19 +271,9 @@ public class SearchWeatherFragment extends Fragment {
                     mWeatherData.getList().get(0).getMain().getTemp(),
                     mWeatherData.getList().get(0).getWeather().get(0).getMain()));
 
-            setViewContainerVisible(mMainContentContainer);
+            Utils.switchView(mMainContentContainer, mViewContainers);
         } else {
             activity.getSupportActionBar().setSubtitle(null);
-        }
-    }
-
-    private void setViewContainerVisible(View viewContainer) {
-        for (View container : mViewContainers) {
-            if (container.equals(viewContainer)) {
-                container.setVisibility(View.VISIBLE);
-            } else {
-                container.setVisibility(View.GONE);
-            }
         }
     }
 }

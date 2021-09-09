@@ -40,6 +40,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.maxclub.easyweather.api.WeatherApi;
 import com.maxclub.easyweather.api.model.WeatherData;
+import com.maxclub.easyweather.utils.Utils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -209,14 +210,14 @@ public class LocationWeatherFragment extends Fragment {
                 if (isLocationEnabled()) {
                     createLocationClient();
                 } else {
-                    setViewContainerVisible(mLocationEnablingContainer);
+                    Utils.switchView(mLocationEnablingContainer, mViewContainers);
                 }
             } else {
-                setViewContainerVisible(mPermissionViewContainer);
+                Utils.switchView(mPermissionViewContainer, mViewContainers);
                 requestPermissions(LOCATION_PERMISSION, REQUEST_LOCATION_PERMISSION);
             }
         } else {
-            setViewContainerVisible(mGooglePlayServicesNotFoundViewContainer);
+            Utils.switchView(mGooglePlayServicesNotFoundViewContainer, mViewContainers);
         }
     }
 
@@ -290,10 +291,10 @@ public class LocationWeatherFragment extends Fragment {
                     if (isLocationEnabled()) {
                         createLocationClient();
                     } else {
-                        setViewContainerVisible(mLocationEnablingContainer);
+                        Utils.switchView(mLocationEnablingContainer, mViewContainers);
                     }
                 } else {
-                    setViewContainerVisible(mPermissionViewContainer);
+                    Utils.switchView(mPermissionViewContainer, mViewContainers);
                 }
                 break;
             default:
@@ -324,7 +325,7 @@ public class LocationWeatherFragment extends Fragment {
         startLocationUpdates();
 
         if (mWeatherData == null) {
-            setViewContainerVisible(mWaitingForDataViewContainer);
+            Utils.switchView(mWaitingForDataViewContainer, mViewContainers);
             mSwipeRefreshLayout.setRefreshing(true);
         }
     }
@@ -387,7 +388,7 @@ public class LocationWeatherFragment extends Fragment {
 
                         if (throwable != null) {
                             Log.e(TAG, throwable.getMessage(), throwable);
-                            setViewContainerVisible(mConnectionErrorContainer);
+                            Utils.switchView(mConnectionErrorContainer, mViewContainers);
                         }
                     }
                 }));
@@ -398,7 +399,7 @@ public class LocationWeatherFragment extends Fragment {
             if (hasLocationPermission()) {
                 if (isLocationEnabled()) {
                     if (mWeatherData == null) {
-                        setViewContainerVisible(mWaitingForDataViewContainer);
+                        Utils.switchView(mWaitingForDataViewContainer, mViewContainers);
                     }
 
                     if (mLocation != null) {
@@ -408,19 +409,19 @@ public class LocationWeatherFragment extends Fragment {
                             createLocationClient();
                         } else {
                             mSwipeRefreshLayout.setRefreshing(false);
-                            setViewContainerVisible(mConnectionErrorContainer);
+                            Utils.switchView(mConnectionErrorContainer, mViewContainers);
                         }
                     }
                 } else {
-                    setViewContainerVisible(mLocationEnablingContainer);
+                    Utils.switchView(mLocationEnablingContainer, mViewContainers);
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
             } else {
-                setViewContainerVisible(mPermissionViewContainer);
+                Utils.switchView(mPermissionViewContainer, mViewContainers);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         } else {
-            setViewContainerVisible(mGooglePlayServicesNotFoundViewContainer);
+            Utils.switchView(mGooglePlayServicesNotFoundViewContainer, mViewContainers);
             mSwipeRefreshLayout.setRefreshing(false);
         }
     }
@@ -432,19 +433,9 @@ public class LocationWeatherFragment extends Fragment {
                     mWeatherData.getList().get(0).getMain().getTemp(),
                     mWeatherData.getList().get(0).getWeather().get(0).getMain()));
 
-            setViewContainerVisible(mMainContentContainer);
+            Utils.switchView(mMainContentContainer, mViewContainers);
         }
 
         getActivity().invalidateOptionsMenu();
-    }
-
-    private void setViewContainerVisible(View viewContainer) {
-        for (View container : mViewContainers) {
-            if (container.equals(viewContainer)) {
-                container.setVisibility(View.VISIBLE);
-            } else {
-                container.setVisibility(View.GONE);
-            }
-        }
     }
 }

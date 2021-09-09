@@ -13,4 +13,5 @@
     <color name="snackbar_background_color">#404040</color>
     <color name="swipe_refresh_layout_color">@color/black</color>
     <color name="swipe_refresh_layout_background_color">@color/white</color>
+    <color name="button_positive_text_color">@color/black</color>
 </resources>

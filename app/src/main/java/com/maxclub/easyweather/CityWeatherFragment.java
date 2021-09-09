@@ -1,6 +1,7 @@
 package com.maxclub.easyweather;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,12 +19,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.maxclub.easyweather.api.WeatherApi;
 import com.maxclub.easyweather.api.model.WeatherData;
 import com.maxclub.easyweather.database.model.City;
+import com.maxclub.easyweather.utils.Utils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -40,6 +43,8 @@ public class CityWeatherFragment extends Fragment {
     private static final String TAG = "CityWeatherFragment";
 
     private static final String ARG_CITY = "city";
+    private static final int REQUEST_REMOVE = 0;
+    private static final String DIALOG_REMOVE = "DialogRemoveItem";
 
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     private WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
@@ -162,10 +167,26 @@ public class CityWeatherFragment extends Fragment {
                 startActivity(SearchWeatherActivityIntent);
                 return true;
             case R.id.action_delete:
-                App.getInstance().getCityDao().delete(mCity);
+                FragmentManager manager = getActivity().getSupportFragmentManager();
+                RemoveItemDialogFragment dialog = RemoveItemDialogFragment.newInstance();
+                dialog.setTargetFragment(CityWeatherFragment.this, REQUEST_REMOVE);
+                dialog.show(manager, DIALOG_REMOVE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode,
+                                 int resultCode,
+                                 @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        switch (requestCode) {
+            case REQUEST_REMOVE:
+                if (resultCode == Activity.RESULT_OK) {
+                    App.getInstance().getCityDao().delete(mCity);
+                }
+                break;
         }
     }
 
@@ -186,7 +207,7 @@ public class CityWeatherFragment extends Fragment {
 
                         if (throwable != null) {
                             Log.e(TAG, throwable.getMessage(), throwable);
-                            setViewContainerVisible(mConnectionErrorContainer);
+                            Utils.switchView(mConnectionErrorContainer, mViewContainers);
                         }
                     }
                 }));
@@ -194,7 +215,7 @@ public class CityWeatherFragment extends Fragment {
 
     private void updateWeather() {
         if (mWeatherData == null) {
-            setViewContainerVisible(mWaitingForDataViewContainer);
+            Utils.switchView(mWaitingForDataViewContainer, mViewContainers);
         }
 
         fetchWeatherByCityName(mCity.name);
@@ -207,17 +228,7 @@ public class CityWeatherFragment extends Fragment {
                     mWeatherData.getList().get(0).getMain().getTemp(),
                     mWeatherData.getList().get(0).getWeather().get(0).getMain()));
 
-            setViewContainerVisible(mMainContentContainer);
-        }
-    }
-
-    private void setViewContainerVisible(View viewContainer) {
-        for (View container : mViewContainers) {
-            if (container.equals(viewContainer)) {
-                container.setVisibility(View.VISIBLE);
-            } else {
-                container.setVisibility(View.GONE);
-            }
+            Utils.switchView(mMainContentContainer, mViewContainers);
         }
     }
 }
