@@ -204,15 +204,19 @@ public class LocationWeatherFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        if (hasLocationPermission()) {
-            if (isLocationEnabled()) {
-                createLocationClient();
+        if (isGooglePlayServicesAvailable()) {
+            if (hasLocationPermission()) {
+                if (isLocationEnabled()) {
+                    createLocationClient();
+                } else {
+                    setViewContainerVisible(mLocationEnablingContainer);
+                }
             } else {
-                setViewContainerVisible(mLocationEnablingContainer);
+                setViewContainerVisible(mPermissionViewContainer);
+                requestPermissions(LOCATION_PERMISSION, REQUEST_LOCATION_PERMISSION);
             }
         } else {
-            setViewContainerVisible(mPermissionViewContainer);
-            requestPermissions(LOCATION_PERMISSION, REQUEST_LOCATION_PERMISSION);
+            setViewContainerVisible(mGooglePlayServicesNotFoundViewContainer);
         }
     }
 
@@ -390,28 +394,33 @@ public class LocationWeatherFragment extends Fragment {
     }
 
     private void updateWeather() {
-        if (hasLocationPermission()) {
-            if (isLocationEnabled()) {
-                if (mWeatherData == null) {
-                    setViewContainerVisible(mWaitingForDataViewContainer);
-                }
-
-                if (mLocation != null) {
-                    fetchWeatherByLocation(mLocation);
-                } else {
-                    if (!mIsLocationUpdatesRegistered) {
-                        createLocationClient();
-                    } else {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        setViewContainerVisible(mConnectionErrorContainer);
+        if (isGooglePlayServicesAvailable()) {
+            if (hasLocationPermission()) {
+                if (isLocationEnabled()) {
+                    if (mWeatherData == null) {
+                        setViewContainerVisible(mWaitingForDataViewContainer);
                     }
+
+                    if (mLocation != null) {
+                        fetchWeatherByLocation(mLocation);
+                    } else {
+                        if (!mIsLocationUpdatesRegistered) {
+                            createLocationClient();
+                        } else {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                            setViewContainerVisible(mConnectionErrorContainer);
+                        }
+                    }
+                } else {
+                    setViewContainerVisible(mLocationEnablingContainer);
+                    mSwipeRefreshLayout.setRefreshing(false);
                 }
             } else {
-                setViewContainerVisible(mLocationEnablingContainer);
+                setViewContainerVisible(mPermissionViewContainer);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         } else {
-            setViewContainerVisible(mPermissionViewContainer);
+            setViewContainerVisible(mGooglePlayServicesNotFoundViewContainer);
             mSwipeRefreshLayout.setRefreshing(false);
         }
     }

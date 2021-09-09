@@ -32,9 +32,17 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:gravity="center"
-                android:text="@string/location_enabling_text"
+                android:text="@string/location_enabling_text_1"
                 android:textSize="20sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:gravity="center"
+                android:text="@string/location_enabling_text_2"
+                android:textSize="16sp" />
 
             <Button
                 android:id="@+id/location_enabling_button"
