@@ -206,7 +206,6 @@ public class LocationWeatherFragment extends Fragment {
 
         if (hasLocationPermission()) {
             if (isLocationEnabled()) {
-
                 createLocationClient();
             } else {
                 setViewContainerVisible(mLocationEnablingContainer);
@@ -309,7 +308,9 @@ public class LocationWeatherFragment extends Fragment {
                         if (location != null) {
                             Log.i(TAG, "getLastLocation() -> " + location.getLatitude() + ", " + location.getLongitude());
                             mLocation = location;
-                            updateWeather();
+                            if (mWeatherData == null) {
+                                updateWeather();
+                            }
                         } else {
                             Log.i(TAG, "getLastLocation() -> null");
                         }
@@ -317,6 +318,11 @@ public class LocationWeatherFragment extends Fragment {
                 });
 
         startLocationUpdates();
+
+        if (mWeatherData == null) {
+            setViewContainerVisible(mWaitingForDataViewContainer);
+            mSwipeRefreshLayout.setRefreshing(true);
+        }
     }
 
     @SuppressLint("MissingPermission")
