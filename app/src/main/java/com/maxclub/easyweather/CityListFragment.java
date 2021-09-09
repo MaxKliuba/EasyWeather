@@ -137,10 +137,10 @@ public class CityListFragment extends Fragment {
         public static final int CURRENT_LOCATION = 0;
         public static final int CITY = 1;
 
-        private SortedList<City> mCities;
+        private SortedList<City> mItems;
 
         public Adapter() {
-            mCities = new SortedList<>(City.class, new SortedList.Callback<City>() {
+            mItems = new SortedList<>(City.class, new SortedList.Callback<City>() {
                 @Override
                 public int compare(City o1, City o2) {
                     return o1.order - o2.order;
@@ -179,11 +179,11 @@ public class CityListFragment extends Fragment {
         }
 
         public SortedList<City> getItems() {
-            return mCities;
+            return mItems;
         }
 
-        public void setItems(List<City> cities) {
-            mCities.replaceAll(cities);
+        public void setItems(List<City> items) {
+            mItems.replaceAll(items);
         }
 
         public void removeItem(RecyclerView.ViewHolder viewHolder) {
@@ -222,17 +222,17 @@ public class CityListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull @NotNull CityListFragment.Adapter.CityViewHolder holder, int position) {
-            holder.bind(mCities.get(position));
+            holder.bind(mItems.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return mCities.size();
+            return mItems.size();
         }
 
         @Override
         public int getItemViewType(int position) {
-            City city = mCities.get(position);
+            City city = mItems.get(position);
 
             return city.id == 0 ? CURRENT_LOCATION : CITY;
         }

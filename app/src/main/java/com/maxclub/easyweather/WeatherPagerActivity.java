@@ -8,12 +8,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.maxclub.easyweather.database.model.City;
 
@@ -25,8 +26,9 @@ public class WeatherPagerActivity extends AppCompatActivity {
 
     private static final String EXTRA_CITY = "com.maxclub.easyweather.extra_city";
 
-    private SortedList<City> mCities;
-    private ViewPager mViewPager;
+    private FragmentAdapter mFragmentAdapter;
+    private ViewPager2 mViewPager;
+    private boolean mFirstUpdate = true;
 
     public static Intent newIntent(Context context, City city) {
         Intent intent = new Intent(context, WeatherPagerActivity.class);
@@ -40,82 +42,120 @@ public class WeatherPagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_pager);
 
-        mCities = new SortedList<>(City.class, new SortedList.Callback<City>() {
-            @Override
-            public int compare(City o1, City o2) {
-                return o1.order - o2.order;
-            }
-
-            @Override
-            public void onChanged(int position, int count) {
-                mViewPager.getAdapter().notifyDataSetChanged();
-            }
-
-            @Override
-            public boolean areContentsTheSame(City oldItem, City newItem) {
-                return oldItem.equals(newItem);
-            }
-
-            @Override
-            public boolean areItemsTheSame(City item1, City item2) {
-                return item1.id == item2.id;
-            }
-
-            @Override
-            public void onInserted(int position, int count) {
-                mViewPager.getAdapter().notifyDataSetChanged();
-            }
-
-            @Override
-            public void onRemoved(int position, int count) {
-                mViewPager.getAdapter().notifyDataSetChanged();
-            }
-
-            @Override
-            public void onMoved(int fromPosition, int toPosition) {
-                mViewPager.getAdapter().notifyDataSetChanged();
-            }
-        });
-
         City city = (City) getIntent().getParcelableExtra(EXTRA_CITY);
+
+        mViewPager = (ViewPager2) findViewById(R.id.weather_view_pager);
+        mFragmentAdapter = new FragmentAdapter(this);
+        mViewPager.setAdapter(mFragmentAdapter);
 
         CityViewModel cityViewModel = new ViewModelProvider(this).get(CityViewModel.class);
         cityViewModel.getCityLiveData().observe(this, new Observer<List<City>>() {
             @Override
             public void onChanged(List<City> cityList) {
-                mCities.replaceAll(cityList);
-                mViewPager.getAdapter().notifyDataSetChanged();
+                mFragmentAdapter.setItems(cityList);
+                mFragmentAdapter.notifyDataSetChanged();
 
-                for (int i = 0; i < mCities.size(); i++) {
-                    if (mCities.get(i).equals(city)) {
-                        mViewPager.setCurrentItem(i);
-                        break;
+                if (mFirstUpdate) {
+                    mFirstUpdate = false;
+                    for (int i = 0; i < mFragmentAdapter.getItemCount(); i++) {
+                        if (mFragmentAdapter.getItems().get(i).equals(city)) {
+                            mViewPager.setCurrentItem(i);
+                            break;
+                        }
                     }
                 }
             }
         });
+    }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+    private class FragmentAdapter extends FragmentStateAdapter {
+        private SortedList<City> mItems;
 
-        mViewPager = (ViewPager) findViewById(R.id.weather_view_pager);
-        mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
-            @NonNull
-            @NotNull
-            @Override
-            public Fragment getItem(int position) {
-                City city = mCities.get(position);
+        public FragmentAdapter(@NonNull @NotNull FragmentActivity fragmentActivity) {
+            super(fragmentActivity);
 
-                if (city.id == 0) {
-                    return LocationWeatherFragment.newInstance();
-                } else {
-                    return CityWeatherFragment.newInstance(city);
+            mItems = new SortedList<>(City.class, new SortedList.Callback<City>() {
+                @Override
+                public int compare(City o1, City o2) {
+                    return o1.order - o2.order;
+                }
+
+                @Override
+                public void onChanged(int position, int count) {
+                    mViewPager.getAdapter().notifyItemRangeChanged(position, count);
+                }
+
+                @Override
+                public boolean areContentsTheSame(City oldItem, City newItem) {
+                    return oldItem.equals(newItem);
+                }
+
+                @Override
+                public boolean areItemsTheSame(City item1, City item2) {
+                    return item1.id == item2.id;
+                }
+
+                @Override
+                public void onInserted(int position, int count) {
+                    mViewPager.getAdapter().notifyItemRangeInserted(position, count);
+                }
+
+                @Override
+                public void onRemoved(int position, int count) {
+                    mViewPager.getAdapter().notifyItemRangeRemoved(position, count);
+                }
+
+                @Override
+                public void onMoved(int fromPosition, int toPosition) {
+                    mViewPager.getAdapter().notifyItemMoved(fromPosition, toPosition);
+                }
+            });
+        }
+
+        public SortedList<City> getItems() {
+            return mItems;
+        }
+
+        public void setItems(List<City> items) {
+            mItems.replaceAll(items);
+        }
+
+        public void removeItem(RecyclerView.ViewHolder viewHolder) {
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return mItems.size();
+        }
+
+        @NonNull
+        @NotNull
+        @Override
+        public Fragment createFragment(int position) {
+            City city = mItems.get(position);
+
+            if (city.id == 0) {
+                return LocationWeatherFragment.newInstance();
+            } else {
+                return CityWeatherFragment.newInstance(city);
+            }
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return mItems.get(position).id;
+        }
+
+        @Override
+        public boolean containsItem(long itemId) {
+            for (int i = 0; i < mItems.size(); i++) {
+                if (mItems.get(i).id == itemId) {
+                    return true;
                 }
             }
 
-            @Override
-            public int getCount() {
-                return mCities.size();
-            }
-        });
+            return false;
+        }
     }
 }
