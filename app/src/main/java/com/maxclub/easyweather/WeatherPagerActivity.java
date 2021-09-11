@@ -11,11 +11,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.maxclub.easyweather.database.model.City;
 
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +67,16 @@ public class WeatherPagerActivity extends AppCompatActivity {
                 }
             }
         });
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, mViewPager, true,
+                new TabLayoutMediator.TabConfigurationStrategy() {
+                    @Override
+                    public void onConfigureTab(@NonNull @NotNull TabLayout.Tab tab, int position) {
+
+                    }
+                });
+        tabLayoutMediator.attach();
     }
 
     private class FragmentAdapter extends FragmentStateAdapter {
@@ -119,10 +130,6 @@ public class WeatherPagerActivity extends AppCompatActivity {
 
         public void setItems(List<City> items) {
             mItems.replaceAll(items);
-        }
-
-        public void removeItem(RecyclerView.ViewHolder viewHolder) {
-
         }
 
         @Override

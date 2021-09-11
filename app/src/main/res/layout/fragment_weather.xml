@@ -45,7 +45,7 @@
             android:layout_height="match_parent"
             android:visibility="gone" />
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/main_content_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -76,7 +76,7 @@
 
             </LinearLayout>
 
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
 
     </FrameLayout>
 

@@ -245,7 +245,7 @@ public class LocationWeatherFragment extends Fragment {
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (mWeatherData != null) {
-            activity.getSupportActionBar().setSubtitle(String.format("%s, %s",
+            activity.getSupportActionBar().setSubtitle(String.format("%s, %s  ⚐",
                     mWeatherData.getCity().getName(), mWeatherData.getCity().getCountry()));
         } else {
             activity.getSupportActionBar().setSubtitle(null);
