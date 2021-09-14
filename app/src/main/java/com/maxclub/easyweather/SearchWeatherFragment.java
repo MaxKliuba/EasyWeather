@@ -40,22 +40,27 @@ public class SearchWeatherFragment extends Fragment {
 
     private static final String TAG = "SearchWeatherFragment";
 
-    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
-    private WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
+    private static final String KEY_WEATHER_DATA = "mWeatherData";
+    private static final String KEY_EDITABLE_QUERY = "mEditableQuery";
+    private static final String KEY_QUERY = "mQuery";
+    private static final String KEY_IS_SEARCH_VIEW_ICONIFIED = "mIsSearchViewIconified";
+
+    private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+    private final WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
     private WeatherData mWeatherData;
     private String mEditableQuery;
     private String mQuery;
+    private boolean mIsSearchViewIconified = false;
+    private boolean mIsSearchViewOnActionViewCollapsed = false;
 
     private View mConnectionErrorContainer;
     private View mWaitingForDataViewContainer;
     private View mMainContentContainer;
-    private List<View> mViewContainers = new ArrayList<>();
+    private final List<View> mViewContainers = new ArrayList<>();
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private SearchView mSearchView;
     private TextView mTextView;
-    private boolean mIsSearchViewIconified = false;
-    private boolean mIsSearchViewOnActionViewCollapsed = false;
 
     public static SearchWeatherFragment newInstance() {
         return new SearchWeatherFragment();
@@ -64,7 +69,13 @@ public class SearchWeatherFragment extends Fragment {
     @Override
     public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+
+        if (savedInstanceState != null) {
+            mWeatherData = (WeatherData) savedInstanceState.getParcelable(KEY_WEATHER_DATA);
+            mEditableQuery = (String) savedInstanceState.getString(KEY_EDITABLE_QUERY);
+            mQuery = (String) savedInstanceState.getString(KEY_QUERY);
+            mIsSearchViewIconified = (boolean) savedInstanceState.getBoolean(KEY_IS_SEARCH_VIEW_ICONIFIED);
+        }
 
         setHasOptionsMenu(true);
     }
@@ -136,6 +147,17 @@ public class SearchWeatherFragment extends Fragment {
         super.onDestroy();
 
         mCompositeDisposable.dispose();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(KEY_WEATHER_DATA, mWeatherData);
+        outState.putString(KEY_EDITABLE_QUERY, mEditableQuery);
+        outState.putString(KEY_QUERY, mQuery);
+        outState.putBoolean(KEY_IS_SEARCH_VIEW_ICONIFIED, mIsSearchViewIconified);
+
     }
 
     @Override

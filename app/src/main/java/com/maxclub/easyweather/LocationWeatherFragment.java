@@ -56,6 +56,9 @@ public class LocationWeatherFragment extends Fragment {
 
     private static final String TAG = "LocationWeatherFragment";
 
+    private static final String KEY_LOCATION = "mLocation";
+    private static final String KEY_WEATHER_DATA = "mWeatherData";
+
     private static final String[] LOCATION_PERMISSION = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -64,11 +67,11 @@ public class LocationWeatherFragment extends Fragment {
 
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback mLocationCallback;
+    private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+    private final WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
+    private WeatherData mWeatherData;
     private Location mLocation;
     private boolean mIsLocationUpdatesRegistered = false;
-    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
-    private WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
-    private WeatherData mWeatherData;
 
     private View mGooglePlayServicesNotFoundViewContainer;
     private View mPermissionViewContainer;
@@ -76,7 +79,7 @@ public class LocationWeatherFragment extends Fragment {
     private View mConnectionErrorContainer;
     private View mWaitingForDataViewContainer;
     private View mMainContentContainer;
-    private List<View> mViewContainers = new ArrayList<>();
+    private final List<View> mViewContainers = new ArrayList<>();
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mTextView;
@@ -88,7 +91,11 @@ public class LocationWeatherFragment extends Fragment {
     @Override
     public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+
+        if (savedInstanceState != null) {
+            mLocation = (Location) savedInstanceState.getParcelable(KEY_LOCATION);
+            mWeatherData = (WeatherData) savedInstanceState.getParcelable(KEY_WEATHER_DATA);
+        }
 
         setHasOptionsMenu(true);
     }
@@ -196,7 +203,11 @@ public class LocationWeatherFragment extends Fragment {
 
         mTextView = (TextView) view.findViewById(R.id.weather_textview);
 
-        updateUserInterface();
+        if (mWeatherData == null) {
+            updateWeather();
+        } else {
+            updateUserInterface();
+        }
 
         return view;
     }
@@ -238,6 +249,14 @@ public class LocationWeatherFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(KEY_LOCATION, mLocation);
+        outState.putParcelable(KEY_WEATHER_DATA, mWeatherData);
+    }
+
+    @Override
     public void onCreateOptionsMenu(@NonNull @NotNull Menu menu, @NonNull @NotNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
@@ -270,9 +289,8 @@ public class LocationWeatherFragment extends Fragment {
 
     private boolean isGooglePlayServicesAvailable() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        int errorCode = apiAvailability.isGooglePlayServicesAvailable(getActivity());
 
-        return errorCode == ConnectionResult.SUCCESS;
+        return apiAvailability.isGooglePlayServicesAvailable(getActivity()) == ConnectionResult.SUCCESS;
     }
 
     private boolean hasLocationPermission() {
@@ -338,7 +356,7 @@ public class LocationWeatherFragment extends Fragment {
 
         mLocationCallback = new LocationCallback() {
             @Override
-            public void onLocationResult(LocationResult locationResult) {
+            public void onLocationResult(@NotNull LocationResult locationResult) {
                 if (locationResult == null) {
                     Log.i(TAG, "onLocationResult() -> null");
 

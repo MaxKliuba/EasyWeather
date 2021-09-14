@@ -1,10 +1,13 @@
 package com.maxclub.easyweather.api.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class WeatherData {
+public class WeatherData implements Parcelable {
     @SerializedName("cnt")
     private int cnt;
 
@@ -13,6 +16,32 @@ public class WeatherData {
 
     @SerializedName("city")
     private City city;
+
+    protected WeatherData(Parcel in) {
+        cnt = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(cnt);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<WeatherData> CREATOR = new Creator<WeatherData>() {
+        @Override
+        public WeatherData createFromParcel(Parcel in) {
+            return new WeatherData(in);
+        }
+
+        @Override
+        public WeatherData[] newArray(int size) {
+            return new WeatherData[size];
+        }
+    };
 
     public int getCnt() {
         return cnt;
@@ -38,7 +67,7 @@ public class WeatherData {
         this.city = city;
     }
 
-    public static class ListItem {
+    public static class ListItem implements Parcelable {
         @SerializedName("dt")
         private long dt;
 
@@ -53,6 +82,34 @@ public class WeatherData {
 
         @SerializedName("visibility")
         private int visibility;
+
+        protected ListItem(Parcel in) {
+            dt = in.readLong();
+            visibility = in.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeLong(dt);
+            dest.writeInt(visibility);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<ListItem> CREATOR = new Creator<ListItem>() {
+            @Override
+            public ListItem createFromParcel(Parcel in) {
+                return new ListItem(in);
+            }
+
+            @Override
+            public ListItem[] newArray(int size) {
+                return new ListItem[size];
+            }
+        };
 
         public long getDt() {
             return dt;
@@ -94,7 +151,7 @@ public class WeatherData {
             this.visibility = visibility;
         }
 
-        public static class Main {
+        public static class Main implements Parcelable {
             @SerializedName("temp")
             private float temp;
 
@@ -118,6 +175,46 @@ public class WeatherData {
 
             @SerializedName("humidity")
             private int humidity;
+
+            protected Main(Parcel in) {
+                temp = in.readFloat();
+                feelsLike = in.readFloat();
+                tempMin = in.readFloat();
+                tempMax = in.readFloat();
+                pressure = in.readInt();
+                sealevel = in.readInt();
+                groundLevel = in.readInt();
+                humidity = in.readInt();
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeFloat(temp);
+                dest.writeFloat(feelsLike);
+                dest.writeFloat(tempMin);
+                dest.writeFloat(tempMax);
+                dest.writeInt(pressure);
+                dest.writeInt(sealevel);
+                dest.writeInt(groundLevel);
+                dest.writeInt(humidity);
+            }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            public static final Creator<Main> CREATOR = new Creator<Main>() {
+                @Override
+                public Main createFromParcel(Parcel in) {
+                    return new Main(in);
+                }
+
+                @Override
+                public Main[] newArray(int size) {
+                    return new Main[size];
+                }
+            };
 
             public float getTemp() {
                 return temp;
@@ -184,7 +281,7 @@ public class WeatherData {
             }
         }
 
-        public static class Weather {
+        public static class Weather implements Parcelable {
             @SerializedName("id")
             private int id;
 
@@ -196,6 +293,38 @@ public class WeatherData {
 
             @SerializedName("icon")
             private String icon;
+
+            protected Weather(Parcel in) {
+                id = in.readInt();
+                main = in.readString();
+                description = in.readString();
+                icon = in.readString();
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeInt(id);
+                dest.writeString(main);
+                dest.writeString(description);
+                dest.writeString(icon);
+            }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            public static final Creator<Weather> CREATOR = new Creator<Weather>() {
+                @Override
+                public Weather createFromParcel(Parcel in) {
+                    return new Weather(in);
+                }
+
+                @Override
+                public Weather[] newArray(int size) {
+                    return new Weather[size];
+                }
+            };
 
             public int getId() {
                 return id;
@@ -230,7 +359,7 @@ public class WeatherData {
             }
         }
 
-        public static class Wind {
+        public static class Wind implements Parcelable {
             @SerializedName("speed")
             private float speed;
 
@@ -239,6 +368,36 @@ public class WeatherData {
 
             @SerializedName("gust")
             private float gust;
+
+            protected Wind(Parcel in) {
+                speed = in.readFloat();
+                deg = in.readFloat();
+                gust = in.readFloat();
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeFloat(speed);
+                dest.writeFloat(deg);
+                dest.writeFloat(gust);
+            }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            public static final Creator<Wind> CREATOR = new Creator<Wind>() {
+                @Override
+                public Wind createFromParcel(Parcel in) {
+                    return new Wind(in);
+                }
+
+                @Override
+                public Wind[] newArray(int size) {
+                    return new Wind[size];
+                }
+            };
 
             public float getSpeed() {
                 return speed;
@@ -266,7 +425,7 @@ public class WeatherData {
         }
     }
 
-    public static class City {
+    public static class City implements Parcelable {
         @SerializedName("id")
         private int id;
 
@@ -287,6 +446,42 @@ public class WeatherData {
 
         @SerializedName("sunset")
         private long sunset;
+
+        protected City(Parcel in) {
+            id = in.readInt();
+            name = in.readString();
+            country = in.readString();
+            timezone = in.readInt();
+            sunrise = in.readLong();
+            sunset = in.readLong();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(id);
+            dest.writeString(name);
+            dest.writeString(country);
+            dest.writeInt(timezone);
+            dest.writeLong(sunrise);
+            dest.writeLong(sunset);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<City> CREATOR = new Creator<City>() {
+            @Override
+            public City createFromParcel(Parcel in) {
+                return new City(in);
+            }
+
+            @Override
+            public City[] newArray(int size) {
+                return new City[size];
+            }
+        };
 
         public int getId() {
             return id;
@@ -344,12 +539,40 @@ public class WeatherData {
             this.sunset = sunset;
         }
 
-        public static class Coord {
+        public static class Coord implements Parcelable {
             @SerializedName("lat")
             private float lat;
 
             @SerializedName("lon")
             private float lon;
+
+            protected Coord(Parcel in) {
+                lat = in.readFloat();
+                lon = in.readFloat();
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeFloat(lat);
+                dest.writeFloat(lon);
+            }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            public static final Creator<Coord> CREATOR = new Creator<Coord>() {
+                @Override
+                public Coord createFromParcel(Parcel in) {
+                    return new Coord(in);
+                }
+
+                @Override
+                public Coord[] newArray(int size) {
+                    return new Coord[size];
+                }
+            };
 
             public float getLat() {
                 return lat;

@@ -43,18 +43,21 @@ public class CityWeatherFragment extends Fragment {
     private static final String TAG = "CityWeatherFragment";
 
     private static final String ARG_CITY = "city";
+
+    private static final String KEY_WEATHER_DATA = "mWeatherData";
+
     private static final int REQUEST_REMOVE = 0;
     private static final String DIALOG_REMOVE = "DialogRemoveItem";
 
-    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
-    private WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
+    private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+    private final WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
     private WeatherData mWeatherData;
     private City mCity;
 
     private View mConnectionErrorContainer;
     private View mWaitingForDataViewContainer;
     private View mMainContentContainer;
-    private List<View> mViewContainers = new ArrayList<>();
+    private final List<View> mViewContainers = new ArrayList<>();
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mTextView;
@@ -72,9 +75,12 @@ public class CityWeatherFragment extends Fragment {
     @Override
     public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
 
         mCity = (City) getArguments().getParcelable(ARG_CITY);
+
+        if (savedInstanceState != null) {
+            mWeatherData = (WeatherData) savedInstanceState.getParcelable(KEY_WEATHER_DATA);
+        }
 
         setHasOptionsMenu(true);
     }
@@ -133,7 +139,11 @@ public class CityWeatherFragment extends Fragment {
 
         mTextView = (TextView) view.findViewById(R.id.weather_textview);
 
-        updateWeather();
+        if (mWeatherData == null) {
+            updateWeather();
+        } else {
+            updateUserInterface();
+        }
 
         return view;
     }
@@ -143,6 +153,13 @@ public class CityWeatherFragment extends Fragment {
         super.onDestroy();
 
         mCompositeDisposable.dispose();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(KEY_WEATHER_DATA, mWeatherData);
     }
 
     @Override
