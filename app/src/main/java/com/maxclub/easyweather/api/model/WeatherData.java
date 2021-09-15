@@ -19,11 +19,15 @@ public class WeatherData implements Parcelable {
 
     protected WeatherData(Parcel in) {
         cnt = in.readInt();
+        list = in.createTypedArrayList(ListItem.CREATOR);
+        city = in.readParcelable(City.class.getClassLoader());
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(cnt);
+        dest.writeTypedList(list);
+        dest.writeParcelable(city, flags);
     }
 
     @Override
@@ -85,12 +89,18 @@ public class WeatherData implements Parcelable {
 
         protected ListItem(Parcel in) {
             dt = in.readLong();
+            main = in.readParcelable(Main.class.getClassLoader());
+            weather = in.createTypedArrayList(Weather.CREATOR);
+            wind = in.readParcelable(Wind.class.getClassLoader());
             visibility = in.readInt();
         }
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeLong(dt);
+            dest.writeParcelable(main, flags);
+            dest.writeTypedList(weather);
+            dest.writeParcelable(wind, flags);
             dest.writeInt(visibility);
         }
 
@@ -450,6 +460,7 @@ public class WeatherData implements Parcelable {
         protected City(Parcel in) {
             id = in.readInt();
             name = in.readString();
+            coord = in.readParcelable(Coord.class.getClassLoader());
             country = in.readString();
             timezone = in.readInt();
             sunrise = in.readLong();
@@ -460,6 +471,7 @@ public class WeatherData implements Parcelable {
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeInt(id);
             dest.writeString(name);
+            dest.writeParcelable(coord, flags);
             dest.writeString(country);
             dest.writeInt(timezone);
             dest.writeLong(sunrise);

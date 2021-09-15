@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -288,9 +289,16 @@ public class LocationWeatherFragment extends Fragment {
     }
 
     private boolean isGooglePlayServicesAvailable() {
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        boolean result = false;
 
-        return apiAvailability.isGooglePlayServicesAvailable(getActivity()) == ConnectionResult.SUCCESS;
+        try {
+            GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+            result = apiAvailability.isGooglePlayServicesAvailable(getActivity()) == ConnectionResult.SUCCESS;
+        } catch (NullPointerException e) {
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        return result;
     }
 
     private boolean hasLocationPermission() {
