@@ -65,12 +65,25 @@
                     app:cardBackgroundColor="?attr/colorSurface"
                     app:cardCornerRadius="16dp">
 
-                    <TextView
-                        android:id="@+id/weather_textview"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
-                        tools:text="@string/app_name" />
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/image_view"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_margin="16dp" />
+
+                        <TextView
+                            android:id="@+id/weather_textview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            tools:text="@string/app_name" />
+
+                    </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
 

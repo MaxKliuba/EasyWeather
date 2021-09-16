@@ -81,9 +81,11 @@ public class LocationWeatherFragment extends Fragment {
     private View mWaitingForDataViewContainer;
     private View mMainContentContainer;
     private final List<View> mViewContainers = new ArrayList<>();
+    private WeatherDrawableManager mWeatherDrawableManager;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mTextView;
+    private ImageView mImageView;
 
     public static LocationWeatherFragment newInstance() {
         return new LocationWeatherFragment();
@@ -99,6 +101,8 @@ public class LocationWeatherFragment extends Fragment {
         }
 
         setHasOptionsMenu(true);
+
+        mWeatherDrawableManager = new WeatherDrawableManager(getActivity());
     }
 
     @Nullable
@@ -201,14 +205,18 @@ public class LocationWeatherFragment extends Fragment {
                 updateWeather();
             }
         });
+        mSwipeRefreshLayout.setOnChildScrollUpCallback(new SwipeRefreshLayout.OnChildScrollUpCallback() {
+            @Override
+            public boolean canChildScrollUp(@NonNull @NotNull SwipeRefreshLayout parent,
+                                            @Nullable @org.jetbrains.annotations.Nullable View child) {
+                return false;
+            }
+        });
 
         mTextView = (TextView) view.findViewById(R.id.weather_textview);
+        mImageView = (ImageView) view.findViewById(R.id.image_view);
 
-        if (mWeatherData == null) {
-            updateWeather();
-        } else {
-            updateUserInterface();
-        }
+        updateUserInterface();
 
         return view;
     }
@@ -339,9 +347,7 @@ public class LocationWeatherFragment extends Fragment {
                         if (location != null) {
                             Log.i(TAG, "getLastLocation() -> " + location.getLatitude() + ", " + location.getLongitude());
                             mLocation = location;
-                            if (mWeatherData == null) {
-                                updateWeather();
-                            }
+                            updateWeather();
                         } else {
                             Log.i(TAG, "getLastLocation() -> null");
                         }
@@ -458,10 +464,15 @@ public class LocationWeatherFragment extends Fragment {
                     mWeatherData.getCity().getName(),
                     mWeatherData.getList().get(0).getMain().getTemp(),
                     mWeatherData.getList().get(0).getWeather().get(0).getMain()));
+            mImageView.setImageDrawable(mWeatherDrawableManager.getDrawableByName(
+                    mWeatherData.getList().get(0).getWeather().get(0).getIcon()
+            ));
 
             Utils.switchView(mMainContentContainer, mViewContainers);
         }
 
-        getActivity().invalidateOptionsMenu();
+        if (getActivity() != null) {
+            getActivity().invalidateOptionsMenu();
+        }
     }
 }

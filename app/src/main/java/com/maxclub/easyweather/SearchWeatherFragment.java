@@ -133,13 +133,16 @@ public class SearchWeatherFragment extends Fragment {
 
         mTextView = (TextView) view.findViewById(R.id.weather_textview);
 
-        if (mWeatherData == null) {
-            updateWeather();
-        } else {
-            updateUserInterface();
-        }
+        updateUserInterface();
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        updateWeather();
     }
 
     @Override
