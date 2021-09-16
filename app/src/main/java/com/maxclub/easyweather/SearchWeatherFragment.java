@@ -54,6 +54,7 @@ public class SearchWeatherFragment extends Fragment {
     private boolean mIsSearchViewOnActionViewCollapsed = false;
 
     private View mConnectionErrorContainer;
+    private TextView mMessageTextView;
     private View mWaitingForDataViewContainer;
     private View mMainContentContainer;
     private final List<View> mViewContainers = new ArrayList<>();
@@ -98,6 +99,7 @@ public class SearchWeatherFragment extends Fragment {
                 .asGif()
                 .load(R.raw.gif_connection_error)
                 .into(connectingErrorImageView);
+        mMessageTextView = (TextView) view.findViewById(R.id.message_text_view);
         Button retryButton = (Button) view.findViewById(R.id.retry_button);
         retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -267,7 +269,7 @@ public class SearchWeatherFragment extends Fragment {
 
                         if (throwable != null) {
                             Log.e(TAG, throwable.getMessage(), throwable);
-                            Utils.switchView(mConnectionErrorContainer, mViewContainers);
+                            setConnectionErrorContainerVisible(throwable.getMessage());
                         }
                     }
                 }));
@@ -300,5 +302,20 @@ public class SearchWeatherFragment extends Fragment {
         } else {
             activity.getSupportActionBar().setSubtitle(null);
         }
+    }
+
+    private void setConnectionErrorContainerVisible() {
+        setConnectionErrorContainerVisible(null);
+    }
+
+    private void setConnectionErrorContainerVisible(String message) {
+        if (message != null) {
+            mMessageTextView.setText(message);
+            mMessageTextView.setVisibility(View.VISIBLE);
+        } else {
+            mMessageTextView.setText(null);
+            mMessageTextView.setVisibility(View.GONE);
+        }
+        Utils.switchView(mConnectionErrorContainer, mViewContainers);
     }
 }
