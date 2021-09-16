@@ -139,7 +139,7 @@ public class CityWeatherFragment extends Fragment {
             }
         });
 
-        mTextView = (TextView) view.findViewById(R.id.weather_textview);
+        mTextView = (TextView) view.findViewById(R.id.main_description_text_view);
 
         updateUserInterface();
 

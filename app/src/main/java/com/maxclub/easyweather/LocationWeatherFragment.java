@@ -47,6 +47,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -85,8 +86,10 @@ public class LocationWeatherFragment extends Fragment {
     private WeatherDrawableManager mWeatherDrawableManager;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private TextView mTextView;
-    private ImageView mImageView;
+    private ImageView mMainIconImageView;
+    private TextView mMainDescriptionTextView;
+    private TextView mMainTempTextView;
+    private TextView mMainFeelsLikeTextView;
 
     public static LocationWeatherFragment newInstance() {
         return new LocationWeatherFragment();
@@ -215,8 +218,10 @@ public class LocationWeatherFragment extends Fragment {
             }
         });
 
-        mTextView = (TextView) view.findViewById(R.id.weather_textview);
-        mImageView = (ImageView) view.findViewById(R.id.image_view);
+        mMainIconImageView = (ImageView) view.findViewById(R.id.main_icon_image_view);
+        mMainDescriptionTextView = (TextView) view.findViewById(R.id.main_description_text_view);
+        mMainTempTextView = (TextView) view.findViewById(R.id.main_temp_text_view);
+        mMainFeelsLikeTextView = (TextView) view.findViewById(R.id.main_feels_like_text_view);
 
         updateUserInterface();
 
@@ -462,13 +467,12 @@ public class LocationWeatherFragment extends Fragment {
 
     private void updateUserInterface() {
         if (mWeatherData != null) {
-            mTextView.setText(String.format("%s %s %s",
-                    mWeatherData.getCity().getName(),
-                    mWeatherData.getList().get(0).getMain().getTemp(),
-                    mWeatherData.getList().get(0).getWeather().get(0).getMain()));
-            mImageView.setImageDrawable(mWeatherDrawableManager.getDrawableByName(
+            mMainIconImageView.setImageDrawable(mWeatherDrawableManager.getDrawableByName(
                     mWeatherData.getList().get(0).getWeather().get(0).getIcon()
             ));
+            mMainDescriptionTextView.setText(mWeatherData.getList().get(0).getWeather().get(0).getMain());
+            mMainTempTextView.setText(String.format(Locale.getDefault(), "%.1f°", mWeatherData.getList().get(0).getMain().getTemp()));
+            mMainFeelsLikeTextView.setText(String.format(Locale.getDefault(), "Feels like: %.1f°", mWeatherData.getList().get(0).getMain().getFeelsLike()));
 
             Utils.switchView(mMainContentContainer, mViewContainers);
         }
