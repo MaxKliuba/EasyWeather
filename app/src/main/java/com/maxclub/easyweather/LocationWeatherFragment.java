@@ -41,13 +41,16 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.maxclub.easyweather.api.WeatherApi;
 import com.maxclub.easyweather.api.model.WeatherData;
-import com.maxclub.easyweather.utils.Utils;
+import com.maxclub.easyweather.utils.DateTimeHelper;
+import com.maxclub.easyweather.utils.LocaleHelper;
+import com.maxclub.easyweather.utils.StringHelper;
+import com.maxclub.easyweather.utils.ViewHelper;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -90,6 +93,13 @@ public class LocationWeatherFragment extends Fragment {
     private TextView mMainDescriptionTextView;
     private TextView mMainTempTextView;
     private TextView mMainFeelsLikeTextView;
+    private TextView mWindTextView;
+    private TextView mVisibilityTextView;
+    private TextView mHumidityTextView;
+    private TextView mPressureTextView;
+    private TextView mSunriseTextView;
+    private TextView mSunsetTextView;
+
 
     public static LocationWeatherFragment newInstance() {
         return new LocationWeatherFragment();
@@ -222,6 +232,12 @@ public class LocationWeatherFragment extends Fragment {
         mMainDescriptionTextView = (TextView) view.findViewById(R.id.main_description_text_view);
         mMainTempTextView = (TextView) view.findViewById(R.id.main_temp_text_view);
         mMainFeelsLikeTextView = (TextView) view.findViewById(R.id.main_feels_like_text_view);
+        mWindTextView = (TextView) view.findViewById(R.id.wind_text_view);
+        mVisibilityTextView = (TextView) view.findViewById(R.id.visibility_text_view);
+        mHumidityTextView = (TextView) view.findViewById(R.id.humidity_text_view);
+        mPressureTextView = (TextView) view.findViewById(R.id.pressure_text_view);
+        mSunriseTextView = (TextView) view.findViewById(R.id.sunrise_text_view);
+        mSunsetTextView = (TextView) view.findViewById(R.id.sunset_text_view);
 
         updateUserInterface();
 
@@ -237,14 +253,14 @@ public class LocationWeatherFragment extends Fragment {
                 if (isLocationEnabled()) {
                     createLocationClient();
                 } else {
-                    Utils.switchView(mLocationEnablingContainer, mViewContainers);
+                    ViewHelper.switchView(mLocationEnablingContainer, mViewContainers);
                 }
             } else {
-                Utils.switchView(mPermissionViewContainer, mViewContainers);
+                ViewHelper.switchView(mPermissionViewContainer, mViewContainers);
                 requestPermissions(LOCATION_PERMISSION, REQUEST_LOCATION_PERMISSION);
             }
         } else {
-            Utils.switchView(mGooglePlayServicesNotFoundViewContainer, mViewContainers);
+            ViewHelper.switchView(mGooglePlayServicesNotFoundViewContainer, mViewContainers);
         }
     }
 
@@ -332,10 +348,10 @@ public class LocationWeatherFragment extends Fragment {
                     if (isLocationEnabled()) {
                         createLocationClient();
                     } else {
-                        Utils.switchView(mLocationEnablingContainer, mViewContainers);
+                        ViewHelper.switchView(mLocationEnablingContainer, mViewContainers);
                     }
                 } else {
-                    Utils.switchView(mPermissionViewContainer, mViewContainers);
+                    ViewHelper.switchView(mPermissionViewContainer, mViewContainers);
                 }
                 break;
             default:
@@ -364,7 +380,7 @@ public class LocationWeatherFragment extends Fragment {
         startLocationUpdates();
 
         if (mWeatherData == null) {
-            Utils.switchView(mWaitingForDataViewContainer, mViewContainers);
+            ViewHelper.switchView(mWaitingForDataViewContainer, mViewContainers);
             mSwipeRefreshLayout.setRefreshing(true);
         }
     }
@@ -414,7 +430,8 @@ public class LocationWeatherFragment extends Fragment {
     private void fetchWeatherByLocation(Location location) {
         mSwipeRefreshLayout.setRefreshing(true);
         mCompositeDisposable.clear();
-        mCompositeDisposable.add(mWeatherApi.getWeatherData(location.getLatitude(), location.getLongitude(), 40, "metric", "en")
+        mCompositeDisposable.add(mWeatherApi.getWeatherData(location.getLatitude(),
+                location.getLongitude(), 40, LocaleHelper.getUnits(), LocaleHelper.getLanguage())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BiConsumer<WeatherData, Throwable>() {
@@ -438,7 +455,7 @@ public class LocationWeatherFragment extends Fragment {
             if (hasLocationPermission()) {
                 if (isLocationEnabled()) {
                     if (mWeatherData == null) {
-                        Utils.switchView(mWaitingForDataViewContainer, mViewContainers);
+                        ViewHelper.switchView(mWaitingForDataViewContainer, mViewContainers);
                     }
 
                     if (mLocation != null) {
@@ -452,29 +469,69 @@ public class LocationWeatherFragment extends Fragment {
                         }
                     }
                 } else {
-                    Utils.switchView(mLocationEnablingContainer, mViewContainers);
+                    ViewHelper.switchView(mLocationEnablingContainer, mViewContainers);
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
             } else {
-                Utils.switchView(mPermissionViewContainer, mViewContainers);
+                ViewHelper.switchView(mPermissionViewContainer, mViewContainers);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         } else {
-            Utils.switchView(mGooglePlayServicesNotFoundViewContainer, mViewContainers);
+            ViewHelper.switchView(mGooglePlayServicesNotFoundViewContainer, mViewContainers);
             mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 
+    @SuppressLint("StringFormatInvalid")
     private void updateUserInterface() {
         if (mWeatherData != null) {
             mMainIconImageView.setImageDrawable(mWeatherDrawableManager.getDrawableByName(
                     mWeatherData.getList().get(0).getWeather().get(0).getIcon()
             ));
-            mMainDescriptionTextView.setText(mWeatherData.getList().get(0).getWeather().get(0).getMain());
-            mMainTempTextView.setText(String.format(Locale.getDefault(), "%.1f°", mWeatherData.getList().get(0).getMain().getTemp()));
-            mMainFeelsLikeTextView.setText(String.format(Locale.getDefault(), "Feels like: %.1f°", mWeatherData.getList().get(0).getMain().getFeelsLike()));
+            mMainDescriptionTextView.setText(StringHelper.capitalize(
+                    mWeatherData.getList().get(0).getWeather().get(0).getDescription())
+            );
 
-            Utils.switchView(mMainContentContainer, mViewContainers);
+            switch (LocaleHelper.getUnits()) {
+                case "imperial":
+                    mMainTempTextView.setText(getString(R.string.temp_f_label,
+                            mWeatherData.getList().get(0).getMain().getTemp()));
+                    mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_f_label,
+                            mWeatherData.getList().get(0).getMain().getFeelsLike()));
+                    mWindTextView.setText(getString(R.string.wind_mph_label,
+                            mWeatherData.getList().get(0).getWind().getSpeed()));
+                    break;
+                case "standard":
+                    mMainTempTextView.setText(getString(R.string.temp_k_label,
+                            mWeatherData.getList().get(0).getMain().getTemp()));
+                    mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_k_label,
+                            mWeatherData.getList().get(0).getMain().getFeelsLike()));
+                    mWindTextView.setText(getString(R.string.wind_m_s_label,
+                            mWeatherData.getList().get(0).getWind().getSpeed()));
+                    break;
+                default:
+                    mMainTempTextView.setText(getString(R.string.temp_c_label,
+                            mWeatherData.getList().get(0).getMain().getTemp()));
+                    mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_c_label,
+                            mWeatherData.getList().get(0).getMain().getFeelsLike()));
+                    mWindTextView.setText(getString(R.string.wind_m_s_label,
+                            mWeatherData.getList().get(0).getWind().getSpeed()));
+                    break;
+            }
+            mVisibilityTextView.setText(getString(R.string.visibility_label,
+                    mWeatherData.getList().get(0).getVisibility()));
+            mHumidityTextView.setText(getString(R.string.humidity_label,
+                    mWeatherData.getList().get(0).getMain().getHumidity()));
+            mPressureTextView.setText(getString(R.string.pressure_label,
+                    mWeatherData.getList().get(0).getMain().getPressure()));
+            mSunriseTextView.setText(getString(R.string.sunrise_label,
+                    DateTimeHelper.getFormattedTime(getActivity(),
+                            new Date((mWeatherData.getCity().getSunrise() + mWeatherData.getCity().getTimezone()) * 1000L))));
+            mSunsetTextView.setText(getString(R.string.sunset_label,
+                    DateTimeHelper.getFormattedTime(getActivity(),
+                            new Date((mWeatherData.getCity().getSunset() + mWeatherData.getCity().getTimezone()) * 1000L))));
+
+            ViewHelper.switchView(mMainContentContainer, mViewContainers);
         }
 
         if (getActivity() != null) {
@@ -494,6 +551,6 @@ public class LocationWeatherFragment extends Fragment {
             mMessageTextView.setText(null);
             mMessageTextView.setVisibility(View.GONE);
         }
-        Utils.switchView(mConnectionErrorContainer, mViewContainers);
+        ViewHelper.switchView(mConnectionErrorContainer, mViewContainers);
     }
 }

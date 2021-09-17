@@ -26,7 +26,7 @@ import com.bumptech.glide.Glide;
 import com.maxclub.easyweather.api.WeatherApi;
 import com.maxclub.easyweather.api.model.WeatherData;
 import com.maxclub.easyweather.database.model.City;
-import com.maxclub.easyweather.utils.Utils;
+import com.maxclub.easyweather.utils.ViewHelper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -237,7 +237,7 @@ public class CityWeatherFragment extends Fragment {
 
     private void updateWeather() {
         if (mWeatherData == null) {
-            Utils.switchView(mWaitingForDataViewContainer, mViewContainers);
+            ViewHelper.switchView(mWaitingForDataViewContainer, mViewContainers);
         }
 
         fetchWeatherByCityName(mCity.name);
@@ -250,7 +250,7 @@ public class CityWeatherFragment extends Fragment {
                     mWeatherData.getList().get(0).getMain().getTemp(),
                     mWeatherData.getList().get(0).getWeather().get(0).getMain()));
 
-            Utils.switchView(mMainContentContainer, mViewContainers);
+            ViewHelper.switchView(mMainContentContainer, mViewContainers);
         }
     }
 
@@ -266,6 +266,6 @@ public class CityWeatherFragment extends Fragment {
             mMessageTextView.setText(null);
             mMessageTextView.setVisibility(View.GONE);
         }
-        Utils.switchView(mConnectionErrorContainer, mViewContainers);
+        ViewHelper.switchView(mConnectionErrorContainer, mViewContainers);
     }
 }

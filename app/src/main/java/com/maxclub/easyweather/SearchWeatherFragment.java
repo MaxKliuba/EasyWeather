@@ -24,7 +24,7 @@ import com.bumptech.glide.Glide;
 import com.maxclub.easyweather.api.WeatherApi;
 import com.maxclub.easyweather.api.model.WeatherData;
 import com.maxclub.easyweather.database.model.City;
-import com.maxclub.easyweather.utils.Utils;
+import com.maxclub.easyweather.utils.ViewHelper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -277,7 +277,7 @@ public class SearchWeatherFragment extends Fragment {
 
     private void updateWeather() {
         if (mWeatherData == null) {
-            Utils.switchView(mWaitingForDataViewContainer, mViewContainers);
+            ViewHelper.switchView(mWaitingForDataViewContainer, mViewContainers);
         }
 
         if (mQuery != null) {
@@ -298,7 +298,7 @@ public class SearchWeatherFragment extends Fragment {
                     mWeatherData.getList().get(0).getMain().getTemp(),
                     mWeatherData.getList().get(0).getWeather().get(0).getMain()));
 
-            Utils.switchView(mMainContentContainer, mViewContainers);
+            ViewHelper.switchView(mMainContentContainer, mViewContainers);
         } else {
             activity.getSupportActionBar().setSubtitle(null);
         }
@@ -316,6 +316,6 @@ public class SearchWeatherFragment extends Fragment {
             mMessageTextView.setText(null);
             mMessageTextView.setVisibility(View.GONE);
         }
-        Utils.switchView(mConnectionErrorContainer, mViewContainers);
+        ViewHelper.switchView(mConnectionErrorContainer, mViewContainers);
     }
 }
