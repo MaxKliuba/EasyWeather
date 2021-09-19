@@ -48,7 +48,7 @@
         <androidx.core.widget.NestedScrollView
             android:id="@+id/main_content_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:padding="8dp"
             android:visibility="gone"
             tools:visibility="visible">
@@ -58,17 +58,26 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <include
-                    layout="@layout/weather_main_card"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dp" />
+                    android:orientation="horizontal">
 
-                <include
-                    layout="@layout/weather_details_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp" />
+                    <include
+                        layout="@layout/weather_main_card"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="8dp"
+                        android:layout_weight="1" />
+
+                    <include
+                        layout="@layout/weather_details_card"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="8dp"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/forecast_recycler_view"
