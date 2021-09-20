@@ -39,7 +39,8 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.maxclub.easyweather.api.WeatherApi;
-import com.maxclub.easyweather.api.model.WeatherData;
+import com.maxclub.easyweather.api.model.ForecastWeatherData;
+import com.maxclub.easyweather.api.model.OneCallWeatherData;
 import com.maxclub.easyweather.utils.DateTimeHelper;
 import com.maxclub.easyweather.utils.LocaleHelper;
 import com.maxclub.easyweather.utils.StringHelper;
@@ -61,7 +62,8 @@ public class LocationWeatherFragment extends Fragment {
     private static final String TAG = "LocationWeatherFragment";
 
     private static final String KEY_LOCATION = "mLocation";
-    private static final String KEY_WEATHER_DATA = "mWeatherData";
+    private static final String KEY_CITY_DATA = "mCityData";
+    private static final String KEY_ONE_CALL_WEATHER_DATA = "mOneCallWeatherData";
 
     private static final String[] LOCATION_PERMISSION = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -73,7 +75,8 @@ public class LocationWeatherFragment extends Fragment {
     private LocationCallback mLocationCallback;
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     private final WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
-    private WeatherData mWeatherData;
+    private ForecastWeatherData.City mCityData;
+    private OneCallWeatherData mOneCallWeatherData;
     private Location mLocation;
     private boolean mIsLocationUpdatesRegistered = false;
 
@@ -110,7 +113,8 @@ public class LocationWeatherFragment extends Fragment {
 
         if (savedInstanceState != null) {
             mLocation = (Location) savedInstanceState.getParcelable(KEY_LOCATION);
-            mWeatherData = (WeatherData) savedInstanceState.getParcelable(KEY_WEATHER_DATA);
+            mCityData = (ForecastWeatherData.City) savedInstanceState.getParcelable(KEY_CITY_DATA);
+            mOneCallWeatherData = (OneCallWeatherData) savedInstanceState.getParcelable(KEY_ONE_CALL_WEATHER_DATA);
         }
 
         setHasOptionsMenu(true);
@@ -284,7 +288,8 @@ public class LocationWeatherFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         outState.putParcelable(KEY_LOCATION, mLocation);
-        outState.putParcelable(KEY_WEATHER_DATA, mWeatherData);
+        outState.putParcelable(KEY_CITY_DATA, mCityData);
+        outState.putParcelable(KEY_ONE_CALL_WEATHER_DATA, mOneCallWeatherData);
     }
 
     @Override
@@ -294,9 +299,9 @@ public class LocationWeatherFragment extends Fragment {
         inflater.inflate(R.menu.location_weather_fragment, menu);
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        if (mWeatherData != null) {
+        if (mCityData != null) {
             activity.getSupportActionBar().setSubtitle(String.format("%s, %s  ⚐",
-                    mWeatherData.getCity().getName(), mWeatherData.getCity().getCountry()));
+                    mCityData.name, mCityData.country));
         } else {
             activity.getSupportActionBar().setSubtitle(null);
         }
@@ -378,7 +383,7 @@ public class LocationWeatherFragment extends Fragment {
 
         startLocationUpdates();
 
-        if (mWeatherData == null) {
+        if (mCityData == null || mOneCallWeatherData == null) {
             ViewHelper.switchView(mWaitingForDataViewContainer, mViewContainers);
             mSwipeRefreshLayout.setRefreshing(true);
         }
@@ -402,7 +407,7 @@ public class LocationWeatherFragment extends Fragment {
                     Log.i(TAG, "onLocationChanged() -> " + location.getLatitude() + ", " + location.getLongitude());
                     mLocation = location;
 
-                    if (mWeatherData == null) {
+                    if (mCityData == null || mOneCallWeatherData == null) {
                         fetchWeatherByLocation(mLocation);
                     }
                 }
@@ -430,15 +435,40 @@ public class LocationWeatherFragment extends Fragment {
         mSwipeRefreshLayout.setRefreshing(true);
         mCompositeDisposable.clear();
         mCompositeDisposable.add(mWeatherApi.getWeatherData(location.getLatitude(),
-                location.getLongitude(), 40, LocaleHelper.getUnits(), LocaleHelper.getLanguage())
+                location.getLongitude(), 1, LocaleHelper.getUnits(), LocaleHelper.getLanguage())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BiConsumer<WeatherData, Throwable>() {
+                .subscribe(new BiConsumer<ForecastWeatherData, Throwable>() {
                     @Override
-                    public void accept(WeatherData weatherData, Throwable throwable) throws Exception {
+                    public void accept(ForecastWeatherData forecastWeatherData, Throwable throwable) throws Exception {
+                        if (forecastWeatherData != null) {
+                            mCityData = forecastWeatherData.city;
+                            fetchWeatherByCityData(mCityData);
+                        }
+
+                        if (throwable != null) {
+                            Log.e(TAG, throwable.getMessage(), throwable);
+                            mSwipeRefreshLayout.setRefreshing(false);
+                            setConnectionErrorContainerVisible(throwable.getMessage());
+                        }
+                    }
+                }));
+    }
+
+    @SuppressLint("CheckResult")
+    private void fetchWeatherByCityData(ForecastWeatherData.City city) {
+        mSwipeRefreshLayout.setRefreshing(true);
+        mCompositeDisposable.clear();
+        mCompositeDisposable.add(mWeatherApi.getOneCallWeatherData(city.coord.lat, city.coord.lon,
+                "minutely", LocaleHelper.getUnits(), LocaleHelper.getLanguage())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BiConsumer<OneCallWeatherData, Throwable>() {
+                    @Override
+                    public void accept(OneCallWeatherData oneCallWeatherData, Throwable throwable) throws Exception {
                         mSwipeRefreshLayout.setRefreshing(false);
 
-                        mWeatherData = weatherData;
+                        mOneCallWeatherData = oneCallWeatherData;
                         updateUserInterface();
 
                         if (throwable != null) {
@@ -453,7 +483,7 @@ public class LocationWeatherFragment extends Fragment {
         if (isGooglePlayServicesAvailable()) {
             if (hasLocationPermission()) {
                 if (isLocationEnabled()) {
-                    if (mWeatherData == null) {
+                    if (mCityData == null || mOneCallWeatherData == null) {
                         ViewHelper.switchView(mWaitingForDataViewContainer, mViewContainers);
                     }
 
@@ -483,52 +513,52 @@ public class LocationWeatherFragment extends Fragment {
 
     @SuppressLint("StringFormatInvalid")
     private void updateUserInterface() {
-        if (mWeatherData != null) {
-            mMainIconImageView.setImageDrawable(mWeatherDrawableManager.getDrawableByName(
-                    mWeatherData.getList().get(0).getWeather().get(0).getIcon()
-            ));
-            mMainDescriptionTextView.setText(StringHelper.capitalize(
-                    mWeatherData.getList().get(0).getWeather().get(0).getDescription())
+        if (mOneCallWeatherData != null) {
+            mMainIconImageView.setImageDrawable(
+                    mWeatherDrawableManager.getDrawableByName(mOneCallWeatherData.current.weather.get(0).icon)
+            );
+            mMainDescriptionTextView.setText(
+                    StringHelper.capitalize(mOneCallWeatherData.current.weather.get(0).description)
             );
 
             switch (LocaleHelper.getUnits()) {
                 case "imperial":
                     mMainTempTextView.setText(getString(R.string.temp_f_label,
-                            mWeatherData.getList().get(0).getMain().getTemp()));
+                            mOneCallWeatherData.current.temp));
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_f_label,
-                            mWeatherData.getList().get(0).getMain().getFeelsLike()));
+                            mOneCallWeatherData.current.feelsLike));
                     mWindTextView.setText(getString(R.string.wind_mph_label,
-                            mWeatherData.getList().get(0).getWind().getSpeed()));
+                            mOneCallWeatherData.current.windSpeed));
                     break;
                 case "standard":
                     mMainTempTextView.setText(getString(R.string.temp_k_label,
-                            mWeatherData.getList().get(0).getMain().getTemp()));
+                            mOneCallWeatherData.current.temp));
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_k_label,
-                            mWeatherData.getList().get(0).getMain().getFeelsLike()));
+                            mOneCallWeatherData.current.feelsLike));
                     mWindTextView.setText(getString(R.string.wind_m_s_label,
-                            mWeatherData.getList().get(0).getWind().getSpeed()));
+                            mOneCallWeatherData.current.windSpeed));
                     break;
                 default:
                     mMainTempTextView.setText(getString(R.string.temp_c_label,
-                            mWeatherData.getList().get(0).getMain().getTemp()));
+                            mOneCallWeatherData.current.temp));
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_c_label,
-                            mWeatherData.getList().get(0).getMain().getFeelsLike()));
+                            mOneCallWeatherData.current.feelsLike));
                     mWindTextView.setText(getString(R.string.wind_m_s_label,
-                            mWeatherData.getList().get(0).getWind().getSpeed()));
+                            mOneCallWeatherData.current.windSpeed));
                     break;
             }
             mVisibilityTextView.setText(getString(R.string.visibility_label,
-                    mWeatherData.getList().get(0).getVisibility()));
+                    mOneCallWeatherData.current.visibility));
             mHumidityTextView.setText(getString(R.string.humidity_label,
-                    mWeatherData.getList().get(0).getMain().getHumidity()));
+                    mOneCallWeatherData.current.humidity));
             mPressureTextView.setText(getString(R.string.pressure_label,
-                    mWeatherData.getList().get(0).getMain().getPressure()));
+                    mOneCallWeatherData.current.pressure));
             mSunriseTextView.setText(getString(R.string.sunrise_label,
                     DateTimeHelper.getFormattedTime(getActivity(),
-                            new Date((mWeatherData.getCity().getSunrise() + mWeatherData.getCity().getTimezone()) * 1000L))));
+                            new Date((mOneCallWeatherData.current.sunrise + mOneCallWeatherData.timezoneOffset) * 1000L))));
             mSunsetTextView.setText(getString(R.string.sunset_label,
                     DateTimeHelper.getFormattedTime(getActivity(),
-                            new Date((mWeatherData.getCity().getSunset() + mWeatherData.getCity().getTimezone()) * 1000L))));
+                            new Date((mOneCallWeatherData.current.sunset + mOneCallWeatherData.timezoneOffset) * 1000L))));
 
             ViewHelper.switchView(mMainContentContainer, mViewContainers);
         }

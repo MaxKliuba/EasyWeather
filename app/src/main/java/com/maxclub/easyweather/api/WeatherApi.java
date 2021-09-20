@@ -1,6 +1,7 @@
 package com.maxclub.easyweather.api;
 
-import com.maxclub.easyweather.api.model.WeatherData;
+import com.maxclub.easyweather.api.model.ForecastWeatherData;
+import com.maxclub.easyweather.api.model.OneCallWeatherData;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,17 +22,24 @@ import retrofit2.http.Query;
 
 public interface WeatherApi {
     @GET("data/2.5/forecast")
-    Single<WeatherData> getWeatherData(@Query("q") String city,
-                                       @Query("cnt") int cnt,
-                                       @Query("units") String units,
-                                       @Query("lang") String lang);
+    Single<ForecastWeatherData> getWeatherData(@Query("q") String city,
+                                               @Query("cnt") int cnt,
+                                               @Query("units") String units,
+                                               @Query("lang") String lang);
 
     @GET("data/2.5/forecast")
-    Single<WeatherData> getWeatherData(@Query("lat") double lat,
-                                       @Query("lon") double lon,
-                                       @Query("cnt") int cnt,
-                                       @Query("units") String units,
-                                       @Query("lang") String lang);
+    Single<ForecastWeatherData> getWeatherData(@Query("lat") double lat,
+                                               @Query("lon") double lon,
+                                               @Query("cnt") int cnt,
+                                               @Query("units") String units,
+                                               @Query("lang") String lang);
+
+    @GET("data/2.5/onecall")
+    Single<OneCallWeatherData> getOneCallWeatherData(@Query("lat") double lat,
+                                                     @Query("lon") double lon,
+                                                     @Query("exclude") String exclude,
+                                                     @Query("units") String units,
+                                                     @Query("lang") String lang);
 
     class Instance {
         private static final String BASE_URL = "https://api.openweathermap.org/";

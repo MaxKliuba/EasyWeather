@@ -22,8 +22,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.maxclub.easyweather.api.WeatherApi;
-import com.maxclub.easyweather.api.model.WeatherData;
+import com.maxclub.easyweather.api.model.ForecastWeatherData;
+import com.maxclub.easyweather.api.model.OneCallWeatherData;
 import com.maxclub.easyweather.database.model.City;
+import com.maxclub.easyweather.utils.LocaleHelper;
 import com.maxclub.easyweather.utils.ViewHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,14 +42,16 @@ public class SearchWeatherFragment extends Fragment {
 
     private static final String TAG = "SearchWeatherFragment";
 
-    private static final String KEY_WEATHER_DATA = "mWeatherData";
+    private static final String KEY_CITY_DATA = "mCityData";
+    private static final String KEY_ONE_CALL_WEATHER_DATA = "mOneCallWeatherData";
     private static final String KEY_EDITABLE_QUERY = "mEditableQuery";
     private static final String KEY_QUERY = "mQuery";
     private static final String KEY_IS_SEARCH_VIEW_ICONIFIED = "mIsSearchViewIconified";
 
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     private final WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
-    private WeatherData mWeatherData;
+    private ForecastWeatherData.City mCityData;
+    private OneCallWeatherData mOneCallWeatherData;
     private String mEditableQuery;
     private String mQuery;
     private boolean mIsSearchViewIconified = false;
@@ -72,7 +76,8 @@ public class SearchWeatherFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
-            mWeatherData = (WeatherData) savedInstanceState.getParcelable(KEY_WEATHER_DATA);
+            mCityData = (ForecastWeatherData.City) savedInstanceState.getParcelable(KEY_CITY_DATA);
+            mOneCallWeatherData = (OneCallWeatherData) savedInstanceState.getParcelable(KEY_ONE_CALL_WEATHER_DATA);
             mEditableQuery = (String) savedInstanceState.getString(KEY_EDITABLE_QUERY);
             mQuery = (String) savedInstanceState.getString(KEY_QUERY);
             mIsSearchViewIconified = (boolean) savedInstanceState.getBoolean(KEY_IS_SEARCH_VIEW_ICONIFIED);
@@ -158,7 +163,8 @@ public class SearchWeatherFragment extends Fragment {
     public void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable(KEY_WEATHER_DATA, mWeatherData);
+        outState.putParcelable(KEY_CITY_DATA, mCityData);
+        outState.putParcelable(KEY_ONE_CALL_WEATHER_DATA, mOneCallWeatherData);
         outState.putString(KEY_EDITABLE_QUERY, mEditableQuery);
         outState.putString(KEY_QUERY, mQuery);
         outState.putBoolean(KEY_IS_SEARCH_VIEW_ICONIFIED, mIsSearchViewIconified);
@@ -224,7 +230,7 @@ public class SearchWeatherFragment extends Fragment {
         });
 
         MenuItem saveCityMenuItem = menu.findItem(R.id.action_save);
-        saveCityMenuItem.setVisible(mWeatherData != null);
+        saveCityMenuItem.setVisible(mCityData != null);
     }
 
     @Override
@@ -234,9 +240,13 @@ public class SearchWeatherFragment extends Fragment {
                 getActivity().finish();
                 return true;
             case R.id.action_save:
-                City city = new City(mWeatherData.getCity().getId(),
-                        mWeatherData.getCity().getName(),
-                        mWeatherData.getCity().getCountry());
+                City city = new City();
+                city.id = mCityData.id;
+                city.name = mCityData.name;
+                city.country = mCityData.country;
+                city.lat = mCityData.coord.lat;
+                city.lon = mCityData.coord.lon;
+
                 App.getInstance().getCityDao().insert(city);
                 getActivity().finish();
                 return true;
@@ -246,18 +256,44 @@ public class SearchWeatherFragment extends Fragment {
     }
 
     @SuppressLint("CheckResult")
-    private void fetchWeatherByCityName(String city) {
+    private void fetchWeatherByCityName(String cityName) {
         mSwipeRefreshLayout.setRefreshing(true);
         mCompositeDisposable.clear();
-        mCompositeDisposable.add(mWeatherApi.getWeatherData(city, 40, "metric", "en")
+        mCompositeDisposable.add(mWeatherApi.getWeatherData(cityName, 1,
+                LocaleHelper.getUnits(), LocaleHelper.getLanguage())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BiConsumer<WeatherData, Throwable>() {
+                .subscribe(new BiConsumer<ForecastWeatherData, Throwable>() {
                     @Override
-                    public void accept(WeatherData weatherData, Throwable throwable) throws Exception {
+                    public void accept(ForecastWeatherData forecastWeatherData, Throwable throwable) throws Exception {
+                        if (forecastWeatherData != null) {
+                            mCityData = forecastWeatherData.city;
+                            fetchWeatherByCityData(mCityData);
+                        }
+
+                        if (throwable != null) {
+                            Log.e(TAG, throwable.getMessage(), throwable);
+                            mSwipeRefreshLayout.setRefreshing(false);
+                            setConnectionErrorContainerVisible(throwable.getMessage());
+                        }
+                    }
+                }));
+    }
+
+    @SuppressLint("CheckResult")
+    private void fetchWeatherByCityData(ForecastWeatherData.City city) {
+        mSwipeRefreshLayout.setRefreshing(true);
+        mCompositeDisposable.clear();
+        mCompositeDisposable.add(mWeatherApi.getOneCallWeatherData(city.coord.lat, city.coord.lon,
+                "minutely", LocaleHelper.getUnits(), LocaleHelper.getLanguage())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BiConsumer<OneCallWeatherData, Throwable>() {
+                    @Override
+                    public void accept(OneCallWeatherData oneCallWeatherData, Throwable throwable) throws Exception {
                         mSwipeRefreshLayout.setRefreshing(false);
 
-                        mWeatherData = weatherData;
+                        mOneCallWeatherData = oneCallWeatherData;
                         updateUserInterface();
 
                         if (mSearchView != null && mIsSearchViewIconified) {
@@ -276,7 +312,7 @@ public class SearchWeatherFragment extends Fragment {
     }
 
     private void updateWeather() {
-        if (mWeatherData == null) {
+        if (mCityData == null || mOneCallWeatherData == null) {
             ViewHelper.switchView(mWaitingForDataViewContainer, mViewContainers);
         }
 
@@ -290,13 +326,12 @@ public class SearchWeatherFragment extends Fragment {
     private void updateUserInterface() {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
 
-        if (mWeatherData != null) {
+        if (mCityData != null && mOneCallWeatherData != null) {
             activity.getSupportActionBar().setSubtitle(String.format("%s, %s",
-                    mWeatherData.getCity().getName(), mWeatherData.getCity().getCountry()));
-            mTextView.setText(String.format("%s %s %s",
-                    mWeatherData.getCity().getName(),
-                    mWeatherData.getList().get(0).getMain().getTemp(),
-                    mWeatherData.getList().get(0).getWeather().get(0).getMain()));
+                    mCityData.name, mCityData.country));
+            mTextView.setText(String.format("%s %s",
+                    mOneCallWeatherData.current.temp,
+                    mOneCallWeatherData.current.weather.get(0).description));
 
             ViewHelper.switchView(mMainContentContainer, mViewContainers);
         } else {

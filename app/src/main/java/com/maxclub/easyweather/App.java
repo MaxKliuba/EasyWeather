@@ -27,7 +27,11 @@ public class App extends Application {
 
         mCityDao = mCityDatabase.cityDao();
 
-        City currentLocationCity = new City(0, 0, getString(R.string.current_location), null);
+        City currentLocationCity = new City();
+        currentLocationCity.order = 0;
+        currentLocationCity.id = 0;
+        currentLocationCity.name = getString(R.string.current_location);
+
         mCityDao.insert(currentLocationCity);
     }
 

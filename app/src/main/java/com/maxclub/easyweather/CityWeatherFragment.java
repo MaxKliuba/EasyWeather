@@ -24,8 +24,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.maxclub.easyweather.api.WeatherApi;
-import com.maxclub.easyweather.api.model.WeatherData;
+import com.maxclub.easyweather.api.model.OneCallWeatherData;
 import com.maxclub.easyweather.database.model.City;
+import com.maxclub.easyweather.utils.LocaleHelper;
 import com.maxclub.easyweather.utils.ViewHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -44,14 +45,14 @@ public class CityWeatherFragment extends Fragment {
 
     private static final String ARG_CITY = "city";
 
-    private static final String KEY_WEATHER_DATA = "mWeatherData";
+    private static final String KEY_ONECALL_WEATHER_DATA = "mOneCallWeatherData";
 
     private static final int REQUEST_REMOVE = 0;
     private static final String DIALOG_REMOVE = "DialogRemoveItem";
 
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     private final WeatherApi mWeatherApi = WeatherApi.Instance.getApi();
-    private WeatherData mWeatherData;
+    private OneCallWeatherData mOneCallWeatherData;
     private City mCity;
 
     private View mConnectionErrorContainer;
@@ -80,7 +81,7 @@ public class CityWeatherFragment extends Fragment {
         mCity = (City) getArguments().getParcelable(ARG_CITY);
 
         if (savedInstanceState != null) {
-            mWeatherData = (WeatherData) savedInstanceState.getParcelable(KEY_WEATHER_DATA);
+            mOneCallWeatherData = (OneCallWeatherData) savedInstanceState.getParcelable(KEY_ONECALL_WEATHER_DATA);
         }
 
         setHasOptionsMenu(true);
@@ -164,7 +165,7 @@ public class CityWeatherFragment extends Fragment {
     public void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable(KEY_WEATHER_DATA, mWeatherData);
+        outState.putParcelable(KEY_ONECALL_WEATHER_DATA, mOneCallWeatherData);
     }
 
     @Override
@@ -213,18 +214,19 @@ public class CityWeatherFragment extends Fragment {
     }
 
     @SuppressLint("CheckResult")
-    private void fetchWeatherByCityName(String city) {
+    private void fetchWeatherByCity(City city) {
         mSwipeRefreshLayout.setRefreshing(true);
         mCompositeDisposable.clear();
-        mCompositeDisposable.add(mWeatherApi.getWeatherData(city, 40, "metric", "en")
+        mCompositeDisposable.add(mWeatherApi.getOneCallWeatherData(city.lat, city.lon,
+                "minutely", LocaleHelper.getUnits(), LocaleHelper.getLanguage())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BiConsumer<WeatherData, Throwable>() {
+                .subscribe(new BiConsumer<OneCallWeatherData, Throwable>() {
                     @Override
-                    public void accept(WeatherData weatherData, Throwable throwable) throws Exception {
+                    public void accept(OneCallWeatherData oneCallWeatherData, Throwable throwable) throws Exception {
                         mSwipeRefreshLayout.setRefreshing(false);
 
-                        mWeatherData = weatherData;
+                        mOneCallWeatherData = oneCallWeatherData;
                         updateUserInterface();
 
                         if (throwable != null) {
@@ -236,19 +238,18 @@ public class CityWeatherFragment extends Fragment {
     }
 
     private void updateWeather() {
-        if (mWeatherData == null) {
+        if (mOneCallWeatherData == null) {
             ViewHelper.switchView(mWaitingForDataViewContainer, mViewContainers);
         }
 
-        fetchWeatherByCityName(mCity.name);
+        fetchWeatherByCity(mCity);
     }
 
     private void updateUserInterface() {
-        if (mWeatherData != null) {
-            mTextView.setText(String.format("%s %s %s",
-                    mWeatherData.getCity().getName(),
-                    mWeatherData.getList().get(0).getMain().getTemp(),
-                    mWeatherData.getList().get(0).getWeather().get(0).getMain()));
+        if (mOneCallWeatherData != null) {
+            mTextView.setText(String.format("%s %s",
+                    mOneCallWeatherData.current.temp,
+                    mOneCallWeatherData.current.weather.get(0).description));
 
             ViewHelper.switchView(mMainContentContainer, mViewContainers);
         }

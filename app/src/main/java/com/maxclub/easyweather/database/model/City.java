@@ -23,21 +23,14 @@ public class City implements Parcelable {
     @ColumnInfo(name = "country")
     public String country;
 
+    @ColumnInfo(name = "lat")
+    public double lat;
+
+    @ColumnInfo(name = "lon")
+    public double lon;
+
     public City() {
 
-    }
-
-    public City(int id, String name, String country) {
-        this.id = id;
-        this.name = name;
-        this.country = country;
-    }
-
-    public City(int order, int id, String name, String country) {
-        this.order = order;
-        this.id = id;
-        this.name = name;
-        this.country = country;
     }
 
     protected City(Parcel in) {
@@ -45,6 +38,8 @@ public class City implements Parcelable {
         id = in.readInt();
         name = in.readString();
         country = in.readString();
+        lat = in.readDouble();
+        lon = in.readDouble();
     }
 
     @Override
@@ -56,16 +51,24 @@ public class City implements Parcelable {
 
         if (order != city.order) return false;
         if (id != city.id) return false;
+        if (Double.compare(city.lat, lat) != 0) return false;
+        if (Double.compare(city.lon, lon) != 0) return false;
         if (name != null ? !name.equals(city.name) : city.name != null) return false;
         return country != null ? country.equals(city.country) : city.country == null;
     }
 
     @Override
     public int hashCode() {
-        int result = order;
+        int result;
+        long temp;
+        result = order;
         result = 31 * result + id;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (country != null ? country.hashCode() : 0);
+        temp = Double.doubleToLongBits(lat);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(lon);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
 
@@ -75,6 +78,8 @@ public class City implements Parcelable {
         dest.writeInt(id);
         dest.writeString(name);
         dest.writeString(country);
+        dest.writeDouble(lat);
+        dest.writeDouble(lon);
     }
 
     @Override

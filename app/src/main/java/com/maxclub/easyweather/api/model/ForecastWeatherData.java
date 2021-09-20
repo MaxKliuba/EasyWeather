@@ -7,17 +7,17 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class WeatherData implements Parcelable {
+public class ForecastWeatherData implements Parcelable {
     @SerializedName("cnt")
-    private int cnt;
+    public int cnt;
 
     @SerializedName("list")
-    List<ListItem> list;
+    public List<ListItem> list;
 
     @SerializedName("city")
-    private City city;
+    public City city;
 
-    protected WeatherData(Parcel in) {
+    protected ForecastWeatherData(Parcel in) {
         cnt = in.readInt();
         list = in.createTypedArrayList(ListItem.CREATOR);
         city = in.readParcelable(City.class.getClassLoader());
@@ -35,57 +35,36 @@ public class WeatherData implements Parcelable {
         return 0;
     }
 
-    public static final Creator<WeatherData> CREATOR = new Creator<WeatherData>() {
+    public static final Creator<ForecastWeatherData> CREATOR = new Creator<ForecastWeatherData>() {
         @Override
-        public WeatherData createFromParcel(Parcel in) {
-            return new WeatherData(in);
+        public ForecastWeatherData createFromParcel(Parcel in) {
+            return new ForecastWeatherData(in);
         }
 
         @Override
-        public WeatherData[] newArray(int size) {
-            return new WeatherData[size];
+        public ForecastWeatherData[] newArray(int size) {
+            return new ForecastWeatherData[size];
         }
     };
 
-    public int getCnt() {
-        return cnt;
-    }
-
-    public void setCnt(int cnt) {
-        this.cnt = cnt;
-    }
-
-    public List<ListItem> getList() {
-        return list;
-    }
-
-    public void setList(List<ListItem> list) {
-        this.list = list;
-    }
-
-    public City getCity() {
-        return city;
-    }
-
-    public void setCity(City city) {
-        this.city = city;
-    }
-
     public static class ListItem implements Parcelable {
         @SerializedName("dt")
-        private long dt;
+        public long dt;
 
         @SerializedName("main")
-        private Main main;
+        public Main main;
 
         @SerializedName("weather")
-        private List<Weather> weather;
+        public List<Weather> weather;
 
         @SerializedName("wind")
-        private Wind wind;
+        public Wind wind;
 
         @SerializedName("visibility")
-        private int visibility;
+        public int visibility;
+
+        @SerializedName("pop")
+        public float pop;
 
         protected ListItem(Parcel in) {
             dt = in.readLong();
@@ -93,6 +72,7 @@ public class WeatherData implements Parcelable {
             weather = in.createTypedArrayList(Weather.CREATOR);
             wind = in.readParcelable(Wind.class.getClassLoader());
             visibility = in.readInt();
+            pop = in.readFloat();
         }
 
         @Override
@@ -102,6 +82,7 @@ public class WeatherData implements Parcelable {
             dest.writeTypedList(weather);
             dest.writeParcelable(wind, flags);
             dest.writeInt(visibility);
+            dest.writeFloat(pop);
         }
 
         @Override
@@ -121,70 +102,33 @@ public class WeatherData implements Parcelable {
             }
         };
 
-        public long getDt() {
-            return dt;
-        }
-
-        public void setDt(long dt) {
-            this.dt = dt;
-        }
-
-        public Main getMain() {
-            return main;
-        }
-
-        public void setMain(Main main) {
-            this.main = main;
-        }
-
-        public List<Weather> getWeather() {
-            return weather;
-        }
-
-        public void setWeather(List<Weather> weather) {
-            this.weather = weather;
-        }
-
-        public Wind getWind() {
-            return wind;
-        }
-
-        public void setWind(Wind wind) {
-            this.wind = wind;
-        }
-
-        public int getVisibility() {
-            return visibility;
-        }
-
-        public void setVisibility(int visibility) {
-            this.visibility = visibility;
-        }
-
         public static class Main implements Parcelable {
             @SerializedName("temp")
-            private float temp;
+            public float temp;
 
             @SerializedName("feels_like")
-            private float feelsLike;
+            public float feelsLike;
 
             @SerializedName("temp_min")
-            private float tempMin;
+            public float tempMin;
 
             @SerializedName("temp_max")
-            private float tempMax;
+            public float tempMax;
 
             @SerializedName("pressure")
-            private int pressure;
+            public int pressure;
 
             @SerializedName("sea_level")
-            private int sealevel;
+            public int sealevel;
 
             @SerializedName("grnd_level")
-            private int groundLevel;
+            public int groundLevel;
 
             @SerializedName("humidity")
-            private int humidity;
+            public int humidity;
+
+            @SerializedName("temp_kf")
+            public float tempKf;
 
             protected Main(Parcel in) {
                 temp = in.readFloat();
@@ -195,6 +139,7 @@ public class WeatherData implements Parcelable {
                 sealevel = in.readInt();
                 groundLevel = in.readInt();
                 humidity = in.readInt();
+                tempKf = in.readFloat();
             }
 
             @Override
@@ -207,6 +152,7 @@ public class WeatherData implements Parcelable {
                 dest.writeInt(sealevel);
                 dest.writeInt(groundLevel);
                 dest.writeInt(humidity);
+                dest.writeFloat(tempKf);
             }
 
             @Override
@@ -225,84 +171,20 @@ public class WeatherData implements Parcelable {
                     return new Main[size];
                 }
             };
-
-            public float getTemp() {
-                return temp;
-            }
-
-            public void setTemp(float temp) {
-                this.temp = temp;
-            }
-
-            public float getFeelsLike() {
-                return feelsLike;
-            }
-
-            public void setFeelsLike(float feelsLike) {
-                this.feelsLike = feelsLike;
-            }
-
-            public float getTempMin() {
-                return tempMin;
-            }
-
-            public void setTempMin(float tempMin) {
-                this.tempMin = tempMin;
-            }
-
-            public float getTempMax() {
-                return tempMax;
-            }
-
-            public void setTempMax(float tempMax) {
-                this.tempMax = tempMax;
-            }
-
-            public int getPressure() {
-                return pressure;
-            }
-
-            public void setPressure(int pressure) {
-                this.pressure = pressure;
-            }
-
-            public int getSealevel() {
-                return sealevel;
-            }
-
-            public void setSealevel(int sealevel) {
-                this.sealevel = sealevel;
-            }
-
-            public int getGroundLevel() {
-                return groundLevel;
-            }
-
-            public void setGroundLevel(int groundLevel) {
-                this.groundLevel = groundLevel;
-            }
-
-            public int getHumidity() {
-                return humidity;
-            }
-
-            public void setHumidity(int humidity) {
-                this.humidity = humidity;
-            }
         }
 
         public static class Weather implements Parcelable {
             @SerializedName("id")
-            private int id;
+            public int id;
 
             @SerializedName("main")
-            private String main;
+            public String main;
 
             @SerializedName("description")
-            private String description;
+            public String description;
 
             @SerializedName("icon")
-            private String icon;
+            public String icon;
 
             protected Weather(Parcel in) {
                 id = in.readInt();
@@ -335,61 +217,24 @@ public class WeatherData implements Parcelable {
                     return new Weather[size];
                 }
             };
-
-            public int getId() {
-                return id;
-            }
-
-            public void setId(int id) {
-                this.id = id;
-            }
-
-            public String getMain() {
-                return main;
-            }
-
-            public void setMain(String main) {
-                this.main = main;
-            }
-
-            public String getDescription() {
-                return description;
-            }
-
-            public void setDescription(String description) {
-                this.description = description;
-            }
-
-            public String getIcon() {
-                return icon;
-            }
-
-            public void setIcon(String icon) {
-                this.icon = icon;
-            }
         }
 
         public static class Wind implements Parcelable {
             @SerializedName("speed")
-            private float speed;
+            public float speed;
 
             @SerializedName("deg")
-            private float deg;
-
-            @SerializedName("gust")
-            private float gust;
+            public int deg;
 
             protected Wind(Parcel in) {
                 speed = in.readFloat();
-                deg = in.readFloat();
-                gust = in.readFloat();
+                deg = in.readInt();
             }
 
             @Override
             public void writeToParcel(Parcel dest, int flags) {
                 dest.writeFloat(speed);
-                dest.writeFloat(deg);
-                dest.writeFloat(gust);
+                dest.writeInt(deg);
             }
 
             @Override
@@ -408,60 +253,40 @@ public class WeatherData implements Parcelable {
                     return new Wind[size];
                 }
             };
-
-            public float getSpeed() {
-                return speed;
-            }
-
-            public void setSpeed(float speed) {
-                this.speed = speed;
-            }
-
-            public float getDeg() {
-                return deg;
-            }
-
-            public void setDeg(float deg) {
-                this.deg = deg;
-            }
-
-            public float getGust() {
-                return gust;
-            }
-
-            public void setGust(float gust) {
-                this.gust = gust;
-            }
         }
     }
 
     public static class City implements Parcelable {
         @SerializedName("id")
-        private int id;
+        public int id;
 
         @SerializedName("name")
-        private String name;
+        public String name;
 
         @SerializedName("coord")
-        private Coord coord;
+        public Coord coord;
 
         @SerializedName("country")
-        private String country;
+        public String country;
+
+        @SerializedName("population")
+        public long population;
 
         @SerializedName("timezone")
-        private int timezone;
+        public int timezone;
 
         @SerializedName("sunrise")
-        private long sunrise;
+        public long sunrise;
 
         @SerializedName("sunset")
-        private long sunset;
+        public long sunset;
 
         protected City(Parcel in) {
             id = in.readInt();
             name = in.readString();
             coord = in.readParcelable(Coord.class.getClassLoader());
             country = in.readString();
+            population = in.readLong();
             timezone = in.readInt();
             sunrise = in.readLong();
             sunset = in.readLong();
@@ -473,6 +298,7 @@ public class WeatherData implements Parcelable {
             dest.writeString(name);
             dest.writeParcelable(coord, flags);
             dest.writeString(country);
+            dest.writeLong(population);
             dest.writeInt(timezone);
             dest.writeLong(sunrise);
             dest.writeLong(sunset);
@@ -495,68 +321,12 @@ public class WeatherData implements Parcelable {
             }
         };
 
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Coord getCoord() {
-            return coord;
-        }
-
-        public void setCoord(Coord coord) {
-            this.coord = coord;
-        }
-
-        public String getCountry() {
-            return country;
-        }
-
-        public void setCountry(String country) {
-            this.country = country;
-        }
-
-        public int getTimezone() {
-            return timezone;
-        }
-
-        public void setTimezone(int timezone) {
-            this.timezone = timezone;
-        }
-
-        public long getSunrise() {
-            return sunrise;
-        }
-
-        public void setSunrise(long sunrise) {
-            this.sunrise = sunrise;
-        }
-
-        public long getSunset() {
-            return sunset;
-        }
-
-        public void setSunset(long sunset) {
-            this.sunset = sunset;
-        }
-
         public static class Coord implements Parcelable {
             @SerializedName("lat")
-            private float lat;
+            public float lat;
 
             @SerializedName("lon")
-            private float lon;
+            public float lon;
 
             protected Coord(Parcel in) {
                 lat = in.readFloat();
@@ -585,22 +355,6 @@ public class WeatherData implements Parcelable {
                     return new Coord[size];
                 }
             };
-
-            public float getLat() {
-                return lat;
-            }
-
-            public void setLat(float lat) {
-                this.lat = lat;
-            }
-
-            public float getLon() {
-                return lon;
-            }
-
-            public void setLon(float lon) {
-                this.lon = lon;
-            }
         }
     }
 }
