@@ -34,4 +34,7 @@
     <string name="wind_mph_label">%1$.1f mph</string>
     <string name="sunrise_label">%1$s</string>
     <string name="sunset_label">%1$s</string>
+    <string name="temp_min_max_c_label">%1$.0f°C / %2$.0f°C</string>
+    <string name="temp_min_max_f_label">%1$.0f°F / %2$.0f°F</string>
+    <string name="temp_min_max_k_label">%1$.0fK / %2$.0fK</string>
 </resources>

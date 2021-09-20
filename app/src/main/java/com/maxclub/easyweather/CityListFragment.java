@@ -221,7 +221,7 @@ public class CityListFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull @NotNull CityListFragment.Adapter.CityViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull @NotNull CityViewHolder holder, int position) {
             holder.bind(mItems.get(position));
         }
 
@@ -244,7 +244,7 @@ public class CityListFragment extends Fragment {
             public CityViewHolder(@NonNull @NotNull View itemView, int viewType) {
                 super(itemView);
 
-                mCityNameTextView = itemView.findViewById(R.id.city_name_view);
+                mCityNameTextView = (TextView) itemView.findViewById(R.id.city_name_view);
 
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override

@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,6 +28,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
@@ -102,6 +105,8 @@ public class LocationWeatherFragment extends Fragment {
     private TextView mSunriseTextView;
     private TextView mSunsetTextView;
 
+    private RecyclerView mDailyWeatherRecyclerView;
+    private DailyWeatherAdapter mDailyWeatherAdapter;
 
     public static LocationWeatherFragment newInstance() {
         return new LocationWeatherFragment();
@@ -241,6 +246,34 @@ public class LocationWeatherFragment extends Fragment {
         mPressureTextView = (TextView) view.findViewById(R.id.pressure_text_view);
         mSunriseTextView = (TextView) view.findViewById(R.id.sunrise_text_view);
         mSunsetTextView = (TextView) view.findViewById(R.id.sunset_text_view);
+
+        mDailyWeatherRecyclerView = (RecyclerView) view.findViewById(R.id.daily_weather_recycler_view);
+        mDailyWeatherRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        mDailyWeatherRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
+                int action = e.getAction();
+
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        rv.getParent().requestDisallowInterceptTouchEvent(true);
+
+                        break;
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
 
         updateUserInterface();
 
@@ -522,7 +555,7 @@ public class LocationWeatherFragment extends Fragment {
             );
 
             switch (LocaleHelper.getUnits()) {
-                case "imperial":
+                case LocaleHelper.IMPERIAL:
                     mMainTempTextView.setText(getString(R.string.temp_f_label,
                             mOneCallWeatherData.current.temp));
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_f_label,
@@ -530,7 +563,7 @@ public class LocationWeatherFragment extends Fragment {
                     mWindTextView.setText(getString(R.string.wind_mph_label,
                             mOneCallWeatherData.current.windSpeed));
                     break;
-                case "standard":
+                case LocaleHelper.STANDARD:
                     mMainTempTextView.setText(getString(R.string.temp_k_label,
                             mOneCallWeatherData.current.temp));
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_k_label,
@@ -561,6 +594,14 @@ public class LocationWeatherFragment extends Fragment {
                             new Date((mOneCallWeatherData.current.sunset + mOneCallWeatherData.timezoneOffset) * 1000L))));
 
             ViewHelper.switchView(mMainContentContainer, mViewContainers);
+
+            if (mDailyWeatherAdapter == null) {
+                mDailyWeatherAdapter = new DailyWeatherAdapter(getActivity());
+                mDailyWeatherRecyclerView.setAdapter(mDailyWeatherAdapter);
+            }
+
+            mDailyWeatherAdapter.setItems(mOneCallWeatherData.daily);
+            mDailyWeatherAdapter.notifyDataSetChanged();
         }
 
         if (getActivity() != null) {

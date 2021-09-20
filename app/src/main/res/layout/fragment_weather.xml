@@ -71,7 +71,7 @@
                     android:layout_margin="8dp" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/forecast_recycler_view"
+                    android:id="@+id/daily_weather_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp" />
