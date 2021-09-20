@@ -101,7 +101,7 @@ public class LocationWeatherFragment extends Fragment {
     private TextView mWindTextView;
     private TextView mVisibilityTextView;
     private TextView mHumidityTextView;
-    private TextView mPressureTextView;
+    private TextView mUviTextView;
     private TextView mSunriseTextView;
     private TextView mSunsetTextView;
 
@@ -243,7 +243,7 @@ public class LocationWeatherFragment extends Fragment {
         mWindTextView = (TextView) view.findViewById(R.id.wind_text_view);
         mVisibilityTextView = (TextView) view.findViewById(R.id.visibility_text_view);
         mHumidityTextView = (TextView) view.findViewById(R.id.humidity_text_view);
-        mPressureTextView = (TextView) view.findViewById(R.id.pressure_text_view);
+        mUviTextView = (TextView) view.findViewById(R.id.uvi_text_view);
         mSunriseTextView = (TextView) view.findViewById(R.id.sunrise_text_view);
         mSunsetTextView = (TextView) view.findViewById(R.id.sunset_text_view);
 
@@ -554,6 +554,9 @@ public class LocationWeatherFragment extends Fragment {
                     StringHelper.capitalize(mOneCallWeatherData.current.weather.get(0).description)
             );
 
+            String[] windDirections = getResources().getStringArray(R.array.wind_direction);
+            String windDirection = windDirections[Math.round(mOneCallWeatherData.current.windDeg / 45.0f)];
+
             switch (LocaleHelper.getUnits()) {
                 case LocaleHelper.IMPERIAL:
                     mMainTempTextView.setText(getString(R.string.temp_f_label,
@@ -561,7 +564,7 @@ public class LocationWeatherFragment extends Fragment {
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_f_label,
                             mOneCallWeatherData.current.feelsLike));
                     mWindTextView.setText(getString(R.string.wind_mph_label,
-                            mOneCallWeatherData.current.windSpeed));
+                            mOneCallWeatherData.current.windSpeed, windDirection));
                     break;
                 case LocaleHelper.STANDARD:
                     mMainTempTextView.setText(getString(R.string.temp_k_label,
@@ -569,7 +572,7 @@ public class LocationWeatherFragment extends Fragment {
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_k_label,
                             mOneCallWeatherData.current.feelsLike));
                     mWindTextView.setText(getString(R.string.wind_m_s_label,
-                            mOneCallWeatherData.current.windSpeed));
+                            mOneCallWeatherData.current.windSpeed, windDirection));
                     break;
                 default:
                     mMainTempTextView.setText(getString(R.string.temp_c_label,
@@ -577,15 +580,15 @@ public class LocationWeatherFragment extends Fragment {
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_c_label,
                             mOneCallWeatherData.current.feelsLike));
                     mWindTextView.setText(getString(R.string.wind_m_s_label,
-                            mOneCallWeatherData.current.windSpeed));
+                            mOneCallWeatherData.current.windSpeed, windDirection));
                     break;
             }
             mVisibilityTextView.setText(getString(R.string.visibility_label,
                     mOneCallWeatherData.current.visibility));
             mHumidityTextView.setText(getString(R.string.humidity_label,
                     mOneCallWeatherData.current.humidity));
-            mPressureTextView.setText(getString(R.string.pressure_label,
-                    mOneCallWeatherData.current.pressure));
+            mUviTextView.setText(getString(R.string.uvi_label,
+                    mOneCallWeatherData.current.uvi));
             mSunriseTextView.setText(getString(R.string.sunrise_label,
                     DateTimeHelper.getFormattedTime(getActivity(),
                             new Date((mOneCallWeatherData.current.sunrise + mOneCallWeatherData.timezoneOffset) * 1000L))));

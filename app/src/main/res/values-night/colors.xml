@@ -5,4 +5,5 @@
     <color name="button_positive_text_color">@color/white</color>
     <color name="selected_dot_color">#E1E1E1</color>
     <color name="default_dot_color">#404040</color>
+    <color name="label_text_color">#7C7C7C</color>
 </resources>
