@@ -105,6 +105,8 @@ public class LocationWeatherFragment extends Fragment {
     private TextView mSunriseTextView;
     private TextView mSunsetTextView;
 
+    private RecyclerView mHourlyWeatherRecyclerView;
+    private HourlyWeatherAdapter mHourlyWeatherAdapter;
     private RecyclerView mDailyWeatherRecyclerView;
     private DailyWeatherAdapter mDailyWeatherAdapter;
 
@@ -247,6 +249,33 @@ public class LocationWeatherFragment extends Fragment {
         mSunriseTextView = (TextView) view.findViewById(R.id.sunrise_text_view);
         mSunsetTextView = (TextView) view.findViewById(R.id.sunset_text_view);
 
+        mHourlyWeatherRecyclerView = (RecyclerView) view.findViewById(R.id.hourly_weather_recycler_view);
+        mHourlyWeatherRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        mHourlyWeatherRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
+                int action = e.getAction();
+
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        rv.getParent().requestDisallowInterceptTouchEvent(true);
+
+                        break;
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
         mDailyWeatherRecyclerView = (RecyclerView) view.findViewById(R.id.daily_weather_recycler_view);
         mDailyWeatherRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         mDailyWeatherRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
@@ -554,8 +583,9 @@ public class LocationWeatherFragment extends Fragment {
                     StringHelper.capitalize(mOneCallWeatherData.current.weather.get(0).description)
             );
 
-            String[] windDirections = getResources().getStringArray(R.array.wind_direction);
-            String windDirection = windDirections[Math.round(mOneCallWeatherData.current.windDeg / 45.0f)];
+            String[] windDirections = getResources().getStringArray(R.array.wind_directions);
+            int index = Math.round(mOneCallWeatherData.current.windDeg / 45.0f);
+            String windDirection = windDirections[index >= windDirections.length ? 0 : index];
 
             switch (LocaleHelper.getUnits()) {
                 case LocaleHelper.IMPERIAL:
@@ -591,20 +621,30 @@ public class LocationWeatherFragment extends Fragment {
                     mOneCallWeatherData.current.uvi));
             mSunriseTextView.setText(getString(R.string.sunrise_label,
                     DateTimeHelper.getFormattedTime(getActivity(),
-                            new Date((mOneCallWeatherData.current.sunrise + mOneCallWeatherData.timezoneOffset) * 1000L))));
+                            new Date((mOneCallWeatherData.current.sunrise
+                                    + mOneCallWeatherData.timezoneOffset) * 1000L))));
             mSunsetTextView.setText(getString(R.string.sunset_label,
                     DateTimeHelper.getFormattedTime(getActivity(),
-                            new Date((mOneCallWeatherData.current.sunset + mOneCallWeatherData.timezoneOffset) * 1000L))));
+                            new Date((mOneCallWeatherData.current.sunset
+                                    + mOneCallWeatherData.timezoneOffset) * 1000L))));
 
-            ViewHelper.switchView(mMainContentContainer, mViewContainers);
+            if (mHourlyWeatherAdapter == null) {
+                mHourlyWeatherAdapter = new HourlyWeatherAdapter(getActivity());
+                mHourlyWeatherRecyclerView.setAdapter(mHourlyWeatherAdapter);
+            }
+
+            mHourlyWeatherAdapter.setItems(mOneCallWeatherData);
+            mHourlyWeatherAdapter.notifyDataSetChanged();
 
             if (mDailyWeatherAdapter == null) {
                 mDailyWeatherAdapter = new DailyWeatherAdapter(getActivity());
                 mDailyWeatherRecyclerView.setAdapter(mDailyWeatherAdapter);
             }
 
-            mDailyWeatherAdapter.setItems(mOneCallWeatherData.daily);
+            mDailyWeatherAdapter.setItems(mOneCallWeatherData);
             mDailyWeatherAdapter.notifyDataSetChanged();
+
+            ViewHelper.switchView(mMainContentContainer, mViewContainers);
         }
 
         if (getActivity() != null) {

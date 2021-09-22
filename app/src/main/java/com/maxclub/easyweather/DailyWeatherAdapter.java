@@ -24,6 +24,7 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
     private final Context mContext;
     private final WeatherDrawableManager mWeatherDrawableManager;
     private List<OneCallWeatherData.Daily> mItems = new ArrayList<>();
+    private long timezoneOffset;
 
     public DailyWeatherAdapter(Context context) {
         mContext = context;
@@ -34,8 +35,9 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
         return mItems;
     }
 
-    public void setItems(List<OneCallWeatherData.Daily> items) {
-        mItems = items;
+    public void setItems(OneCallWeatherData oneCallWeatherData) {
+        mItems = oneCallWeatherData.daily;
+        timezoneOffset = oneCallWeatherData.timezoneOffset;
     }
 
     @NonNull
@@ -59,7 +61,7 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
     }
 
     public class DailyWeatherHolder extends RecyclerView.ViewHolder {
-        private TextView mDayTextView;
+        private TextView mDateTextView;
         private ImageView mIconImageView;
         private TextView mTempTextView;
         private OneCallWeatherData.Daily mDailyWeather;
@@ -67,9 +69,9 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
         public DailyWeatherHolder(@NonNull @NotNull View itemView, int viewType) {
             super(itemView);
 
-            mDayTextView = (TextView) itemView.findViewById(R.id.day_text_view);
-            mIconImageView = (ImageView) itemView.findViewById(R.id.icon_image_view);
-            mTempTextView = (TextView) itemView.findViewById(R.id.temp_text_view);
+            mDateTextView = (TextView) itemView.findViewById(R.id.daily_date_text_view);
+            mIconImageView = (ImageView) itemView.findViewById(R.id.daily_icon_image_view);
+            mTempTextView = (TextView) itemView.findViewById(R.id.daily_temp_text_view);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -82,7 +84,8 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
         public void bind(OneCallWeatherData.Daily dailyWeather) {
             mDailyWeather = dailyWeather;
 
-            mDayTextView.setText(DateTimeHelper.getFormattedDate(mContext, new Date(mDailyWeather.dt * 1000L)));
+            mDateTextView.setText(DateTimeHelper.getFormattedDate(mContext,
+                    new Date((mDailyWeather.dt + timezoneOffset) * 1000L)));
             mIconImageView.setImageDrawable(
                     mWeatherDrawableManager.getDrawableByName(mDailyWeather.weather.get(0).icon)
             );

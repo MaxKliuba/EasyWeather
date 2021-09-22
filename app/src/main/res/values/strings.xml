@@ -30,8 +30,8 @@
     <string name="uvi_label">%1$.1f</string>
     <string name="humidity_label">%1$d\%%</string>
     <string name="visibility_label">%1$d m</string>
-    <string name="wind_m_s_label">%1$.1f m/s, %2$s</string>
-    <string name="wind_mph_label">%1$.1f mph, %2$s</string>
+    <string name="wind_m_s_label">%1$.1f m/s %2$s</string>
+    <string name="wind_mph_label">%1$.1f mph %2$s</string>
     <string name="sunrise_label">%1$s</string>
     <string name="sunset_label">%1$s</string>
     <string name="temp_min_max_c_label">%1$.0f°C / %2$.0f°C</string>
@@ -43,7 +43,7 @@
     <string name="uvi_label_text">UVI</string>
     <string name="sunrise_label_text">Sunrise</string>
     <string name="sunset_label_text">Sunset</string>
-    <string-array name="wind_direction">
+    <string-array name="wind_directions">
         <item>↓ S</item>
         <item>↙ SW</item>
         <item>← W</item>
@@ -52,5 +52,18 @@
         <item>↗ NE</item>
         <item>→ E</item>
         <item>↘ SE</item>
+    </string-array>
+    <string name="temp_and_feels_like_c_label">%1$.0f° (%2$.0f°)</string>
+    <string name="temp_and_feels_like_f_label">%1$.0f° (%2$.0f°)</string>
+    <string name="temp_and_feels_like_k_label">%1$.0f (%2$.0f)</string>
+    <string-array name="wind_direction_arrows">
+        <item>↓</item>
+        <item>↙</item>
+        <item>←</item>
+        <item>↖</item>
+        <item>↑</item>
+        <item>↗</item>
+        <item>→</item>
+        <item>↘</item>
     </string-array>
 </resources>

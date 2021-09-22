@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="100dp"
+    android:layout_height="210dp"
+    android:background="?attr/colorSurface"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/hourly_time_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="06:00 PM" />
+
+    <ImageView
+        android:id="@+id/hourly_icon_image_view"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        tools:background="@color/light_gray"
+        tools:ignore="ContentDescription"
+        tools:src="@drawable/ic_launcher_foreground" />
+
+    <TextView
+        android:id="@+id/hourly_temp_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="-20° (-15°)" />
+
+    <TextView
+        android:id="@+id/hourly_humidity_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        tools:text="70%" />
+
+    <TextView
+        android:id="@+id/hourly_uvi_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        tools:text="0.5" />
+
+    <TextView
+        android:id="@+id/hourly_visibility_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        tools:text="10000m" />
+
+    <TextView
+        android:id="@+id/hourly_wind_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        tools:text="11.5 m/s ↓" />
+
+</LinearLayout>

@@ -46,10 +46,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
+                        android:text="@string/wind_label_text"
                         android:textColor="@color/label_text_color"
-                        android:text="@string/wind_label_text" />
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/wind_text_view"
@@ -57,7 +57,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        tools:text="1 m/s" />
+                        tools:text="1 m/s, ↓ S" />
 
                 </LinearLayout>
 
@@ -88,10 +88,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
+                        android:text="@string/humidity_label_text"
                         android:textColor="@color/label_text_color"
-                        android:text="@string/humidity_label_text" />
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/humidity_text_view"
@@ -130,10 +130,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
+                        android:text="@string/sunrise_label_text"
                         android:textColor="@color/label_text_color"
-                        android:text="@string/sunrise_label_text" />
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/sunrise_text_view"
@@ -181,10 +181,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
+                        android:text="@string/visibility_label_text"
                         android:textColor="@color/label_text_color"
-                        android:text="@string/visibility_label_text" />
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/visibility_text_view"
@@ -223,10 +223,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
+                        android:text="@string/uvi_label_text"
                         android:textColor="@color/label_text_color"
-                        android:text="@string/uvi_label_text" />
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/uvi_text_view"
@@ -265,10 +265,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
+                        android:text="@string/sunset_label_text"
                         android:textColor="@color/label_text_color"
-                        android:text="@string/sunset_label_text" />
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/sunset_text_view"
