@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="100dp"
-    android:layout_height="210dp"
+    android:layout_height="180dp"
     android:background="?attr/colorSurface"
     android:gravity="center"
     android:orientation="vertical"
@@ -58,16 +58,6 @@
         android:textSize="12sp"
         android:textStyle="bold"
         tools:text="0.5" />
-
-    <TextView
-        android:id="@+id/hourly_visibility_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:gravity="center"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        tools:text="10000m" />
 
     <TextView
         android:id="@+id/hourly_wind_text_view"

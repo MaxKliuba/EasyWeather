@@ -63,13 +63,12 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
     }
 
     public class HourlyWeatherHolder extends RecyclerView.ViewHolder {
-        private TextView mTimeTextView;
-        private ImageView mIconImageView;
-        private TextView mTempTextView;
-        private TextView mHumidityTextView;
-        private TextView mUviTextView;
-        private TextView mVisibilityTextView;
-        private TextView mWindTextView;
+        private final TextView mTimeTextView;
+        private final ImageView mIconImageView;
+        private final TextView mTempTextView;
+        private final TextView mHumidityTextView;
+        private final TextView mUviTextView;
+        private final TextView mWindTextView;
         private OneCallWeatherData.Hourly mHourlyWeather;
 
         public HourlyWeatherHolder(@NonNull @NotNull View itemView, int viewType) {
@@ -80,22 +79,19 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
             mTempTextView = (TextView) itemView.findViewById(R.id.hourly_temp_text_view);
             mHumidityTextView = (TextView) itemView.findViewById(R.id.hourly_humidity_text_view);
             mUviTextView = (TextView) itemView.findViewById(R.id.hourly_uvi_text_view);
-            mVisibilityTextView = (TextView) itemView.findViewById(R.id.hourly_visibility_text_view);
             mWindTextView = (TextView) itemView.findViewById(R.id.hourly_wind_text_view);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
         }
 
         public void bind(OneCallWeatherData.Hourly hourlyWeather) {
             mHourlyWeather = hourlyWeather;
 
-            mTimeTextView.setText(DateTimeHelper.getFormattedTime(mContext,
-                    new Date((mHourlyWeather.dt + timezoneOffset) * 1000L)));
+            if (getBindingAdapterPosition() == 0) {
+                mTimeTextView.setText(mContext.getString(R.string.now_label));
+            } else {
+                mTimeTextView.setText(DateTimeHelper.getFormattedTime(mContext,
+                        new Date((mHourlyWeather.dt + timezoneOffset) * 1000L)));
+            }
+
             mIconImageView.setImageDrawable(
                     mWeatherDrawableManager.getDrawableByName(mHourlyWeather.weather.get(0).icon)
             );
@@ -128,8 +124,6 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
                     mHourlyWeather.humidity));
             mUviTextView.setText(mContext.getString(R.string.uvi_label,
                     mHourlyWeather.uvi));
-            mVisibilityTextView.setText(mContext.getString(R.string.visibility_label,
-                    mHourlyWeather.visibility));
         }
     }
 }

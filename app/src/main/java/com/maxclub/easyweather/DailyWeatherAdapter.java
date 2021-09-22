@@ -61,9 +61,9 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
     }
 
     public class DailyWeatherHolder extends RecyclerView.ViewHolder {
-        private TextView mDateTextView;
-        private ImageView mIconImageView;
-        private TextView mTempTextView;
+        private final TextView mDateTextView;
+        private final ImageView mIconImageView;
+        private final TextView mTempTextView;
         private OneCallWeatherData.Daily mDailyWeather;
 
         public DailyWeatherHolder(@NonNull @NotNull View itemView, int viewType) {
