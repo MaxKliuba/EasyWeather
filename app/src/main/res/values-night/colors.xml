@@ -6,4 +6,5 @@
     <color name="selected_dot_color">#E1E1E1</color>
     <color name="default_dot_color">#404040</color>
     <color name="label_text_color">#7C7C7C</color>
+    <color name="weather_icon_color">#FF818181</color>
 </resources>

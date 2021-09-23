@@ -19,4 +19,5 @@
     <color name="selected_dot_color">@color/dark_gray</color>
     <color name="default_dot_color">@color/gray</color>
     <color name="label_text_color">@color/gray</color>
+    <color name="weather_icon_color">#FF7A7A7A</color>
 </resources>

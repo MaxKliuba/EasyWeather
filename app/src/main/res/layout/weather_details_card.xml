@@ -29,13 +29,13 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_margin="8dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="2dp"
                     android:scaleType="centerCrop"
-                    tools:background="@color/light_gray"
-                    tools:ignore="ContentDescription"
-                    tools:src="@drawable/ic_launcher_foreground" />
+                    android:src="@drawable/ic_wind_30"
+                    tools:ignore="ContentDescription" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -71,13 +71,13 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_margin="8dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="2dp"
                     android:scaleType="centerCrop"
-                    tools:background="@color/light_gray"
-                    tools:ignore="ContentDescription"
-                    tools:src="@drawable/ic_launcher_foreground" />
+                    android:src="@drawable/ic_humidity_30"
+                    tools:ignore="ContentDescription" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -113,13 +113,13 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_margin="8dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="2dp"
                     android:scaleType="centerCrop"
-                    tools:background="@color/light_gray"
-                    tools:ignore="ContentDescription"
-                    tools:src="@drawable/ic_launcher_foreground" />
+                    android:src="@drawable/ic_sunrise_30"
+                    tools:ignore="ContentDescription" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -164,13 +164,13 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_margin="8dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="2dp"
                     android:scaleType="centerCrop"
-                    tools:background="@color/light_gray"
-                    tools:ignore="ContentDescription"
-                    tools:src="@drawable/ic_launcher_foreground" />
+                    android:src="@drawable/ic_visibility_30"
+                    tools:ignore="ContentDescription" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -206,13 +206,13 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_margin="8dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="2dp"
                     android:scaleType="centerCrop"
-                    tools:background="@color/light_gray"
-                    tools:ignore="ContentDescription"
-                    tools:src="@drawable/ic_launcher_foreground" />
+                    android:src="@drawable/ic_uvi_30"
+                    tools:ignore="ContentDescription" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -248,13 +248,13 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_margin="8dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="2dp"
                     android:scaleType="centerCrop"
-                    tools:background="@color/light_gray"
-                    tools:ignore="ContentDescription"
-                    tools:src="@drawable/ic_launcher_foreground" />
+                    android:src="@drawable/ic_sunset_30"
+                    tools:ignore="ContentDescription" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
