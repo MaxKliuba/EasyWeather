@@ -251,43 +251,14 @@ public class LocationWeatherFragment extends Fragment {
 
         mHourlyWeatherRecyclerView = (RecyclerView) view.findViewById(R.id.hourly_weather_recycler_view);
         mHourlyWeatherRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        mHourlyWeatherRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
-                int action = e.getAction();
 
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        rv.getParent().requestDisallowInterceptTouchEvent(true);
-
-                        break;
-                }
-
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
-
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-            }
-        });
         mDailyWeatherRecyclerView = (RecyclerView) view.findViewById(R.id.daily_weather_recycler_view);
         mDailyWeatherRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         mDailyWeatherRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
-                int action = e.getAction();
-
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        rv.getParent().requestDisallowInterceptTouchEvent(true);
-
-                        break;
+                if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                    rv.getParent().requestDisallowInterceptTouchEvent(true);
                 }
 
                 return false;
