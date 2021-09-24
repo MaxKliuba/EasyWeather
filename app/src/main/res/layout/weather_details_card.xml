@@ -29,8 +29,8 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginVertical="2dp"
                     android:scaleType="centerCrop"
@@ -71,8 +71,8 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginVertical="2dp"
                     android:scaleType="centerCrop"
@@ -113,8 +113,8 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginVertical="2dp"
                     android:scaleType="centerCrop"
@@ -164,8 +164,8 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginVertical="2dp"
                     android:scaleType="centerCrop"
@@ -206,8 +206,8 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginVertical="2dp"
                     android:scaleType="centerCrop"
@@ -248,8 +248,8 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginVertical="2dp"
                     android:scaleType="centerCrop"

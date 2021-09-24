@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,6 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
@@ -25,12 +28,15 @@ import com.maxclub.easyweather.api.WeatherApi;
 import com.maxclub.easyweather.api.model.ForecastWeatherData;
 import com.maxclub.easyweather.api.model.OneCallWeatherData;
 import com.maxclub.easyweather.database.model.City;
+import com.maxclub.easyweather.utils.DateTimeHelper;
 import com.maxclub.easyweather.utils.LocaleHelper;
+import com.maxclub.easyweather.utils.StringHelper;
 import com.maxclub.easyweather.utils.ViewHelper;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -62,10 +68,25 @@ public class SearchWeatherFragment extends Fragment {
     private View mWaitingForDataViewContainer;
     private View mMainContentContainer;
     private final List<View> mViewContainers = new ArrayList<>();
+    private WeatherDrawableManager mWeatherDrawableManager;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private SearchView mSearchView;
-    private TextView mTextView;
+    private ImageView mMainIconImageView;
+    private TextView mMainDescriptionTextView;
+    private TextView mMainTempTextView;
+    private TextView mMainFeelsLikeTextView;
+    private TextView mWindTextView;
+    private TextView mVisibilityTextView;
+    private TextView mHumidityTextView;
+    private TextView mUviTextView;
+    private TextView mSunriseTextView;
+    private TextView mSunsetTextView;
+
+    private RecyclerView mHourlyWeatherRecyclerView;
+    private HourlyWeatherAdapter mHourlyWeatherAdapter;
+    private RecyclerView mDailyWeatherRecyclerView;
+    private DailyWeatherAdapter mDailyWeatherAdapter;
 
     public static SearchWeatherFragment newInstance() {
         return new SearchWeatherFragment();
@@ -82,6 +103,8 @@ public class SearchWeatherFragment extends Fragment {
             mQuery = (String) savedInstanceState.getString(KEY_QUERY);
             mIsSearchViewIconified = (boolean) savedInstanceState.getBoolean(KEY_IS_SEARCH_VIEW_ICONIFIED);
         }
+
+        mWeatherDrawableManager = new WeatherDrawableManager(getActivity());
 
         setHasOptionsMenu(true);
     }
@@ -138,7 +161,42 @@ public class SearchWeatherFragment extends Fragment {
             }
         });
 
-        mTextView = (TextView) view.findViewById(R.id.main_description_text_view);
+        mMainIconImageView = (ImageView) view.findViewById(R.id.main_icon_image_view);
+        mMainDescriptionTextView = (TextView) view.findViewById(R.id.main_description_text_view);
+        mMainTempTextView = (TextView) view.findViewById(R.id.main_temp_text_view);
+        mMainFeelsLikeTextView = (TextView) view.findViewById(R.id.main_feels_like_text_view);
+        mWindTextView = (TextView) view.findViewById(R.id.wind_text_view);
+        mVisibilityTextView = (TextView) view.findViewById(R.id.visibility_text_view);
+        mHumidityTextView = (TextView) view.findViewById(R.id.humidity_text_view);
+        mUviTextView = (TextView) view.findViewById(R.id.uvi_text_view);
+        mSunriseTextView = (TextView) view.findViewById(R.id.sunrise_text_view);
+        mSunsetTextView = (TextView) view.findViewById(R.id.sunset_text_view);
+
+        mHourlyWeatherRecyclerView = (RecyclerView) view.findViewById(R.id.hourly_weather_recycler_view);
+        mHourlyWeatherRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+
+        mDailyWeatherRecyclerView = (RecyclerView) view.findViewById(R.id.daily_weather_recycler_view);
+        mDailyWeatherRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        mDailyWeatherRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
+                if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                    rv.getParent().requestDisallowInterceptTouchEvent(true);
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
 
         updateUserInterface();
 
@@ -329,9 +387,74 @@ public class SearchWeatherFragment extends Fragment {
         if (mCityData != null && mOneCallWeatherData != null) {
             activity.getSupportActionBar().setSubtitle(String.format("%s, %s",
                     mCityData.name, mCityData.country));
-            mTextView.setText(String.format("%s %s",
-                    mOneCallWeatherData.current.temp,
-                    mOneCallWeatherData.current.weather.get(0).description));
+
+            mMainIconImageView.setImageDrawable(
+                    mWeatherDrawableManager.getDrawableByName(mOneCallWeatherData.current.weather.get(0).icon)
+            );
+            mMainDescriptionTextView.setText(
+                    StringHelper.capitalize(mOneCallWeatherData.current.weather.get(0).description)
+            );
+
+            String[] windDirections = getResources().getStringArray(R.array.wind_directions);
+            int index = Math.round(mOneCallWeatherData.current.windDeg / 45.0f);
+            String windDirection = windDirections[index >= windDirections.length ? 0 : index];
+
+            switch (LocaleHelper.getUnits()) {
+                case LocaleHelper.IMPERIAL:
+                    mMainTempTextView.setText(getString(R.string.temp_f_label,
+                            mOneCallWeatherData.current.temp));
+                    mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_f_label,
+                            mOneCallWeatherData.current.feelsLike));
+                    mWindTextView.setText(getString(R.string.wind_mph_label,
+                            mOneCallWeatherData.current.windSpeed, windDirection));
+                    break;
+                case LocaleHelper.STANDARD:
+                    mMainTempTextView.setText(getString(R.string.temp_k_label,
+                            mOneCallWeatherData.current.temp));
+                    mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_k_label,
+                            mOneCallWeatherData.current.feelsLike));
+                    mWindTextView.setText(getString(R.string.wind_m_s_label,
+                            mOneCallWeatherData.current.windSpeed, windDirection));
+                    break;
+                default:
+                    mMainTempTextView.setText(getString(R.string.temp_c_label,
+                            mOneCallWeatherData.current.temp));
+                    mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_c_label,
+                            mOneCallWeatherData.current.feelsLike));
+                    mWindTextView.setText(getString(R.string.wind_m_s_label,
+                            mOneCallWeatherData.current.windSpeed, windDirection));
+                    break;
+            }
+            mVisibilityTextView.setText(getString(R.string.visibility_label,
+                    mOneCallWeatherData.current.visibility));
+            mHumidityTextView.setText(getString(R.string.humidity_label,
+                    mOneCallWeatherData.current.humidity));
+            mUviTextView.setText(getString(R.string.uvi_label,
+                    mOneCallWeatherData.current.uvi));
+            mSunriseTextView.setText(getString(R.string.sunrise_label,
+                    DateTimeHelper.getFormattedTime(getActivity(),
+                            new Date((mOneCallWeatherData.current.sunrise
+                                    + mOneCallWeatherData.timezoneOffset) * 1000L))));
+            mSunsetTextView.setText(getString(R.string.sunset_label,
+                    DateTimeHelper.getFormattedTime(getActivity(),
+                            new Date((mOneCallWeatherData.current.sunset
+                                    + mOneCallWeatherData.timezoneOffset) * 1000L))));
+
+            if (mHourlyWeatherAdapter == null) {
+                mHourlyWeatherAdapter = new HourlyWeatherAdapter(getActivity());
+                mHourlyWeatherRecyclerView.setAdapter(mHourlyWeatherAdapter);
+            }
+
+            mHourlyWeatherAdapter.setItems(mOneCallWeatherData);
+            mHourlyWeatherAdapter.notifyDataSetChanged();
+
+            if (mDailyWeatherAdapter == null) {
+                mDailyWeatherAdapter = new DailyWeatherAdapter(getActivity());
+                mDailyWeatherRecyclerView.setAdapter(mDailyWeatherAdapter);
+            }
+
+            mDailyWeatherAdapter.setItems(mOneCallWeatherData);
+            mDailyWeatherAdapter.notifyDataSetChanged();
 
             ViewHelper.switchView(mMainContentContainer, mViewContainers);
         } else {

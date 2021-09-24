@@ -124,9 +124,9 @@ public class LocationWeatherFragment extends Fragment {
             mOneCallWeatherData = (OneCallWeatherData) savedInstanceState.getParcelable(KEY_ONE_CALL_WEATHER_DATA);
         }
 
-        setHasOptionsMenu(true);
-
         mWeatherDrawableManager = new WeatherDrawableManager(getActivity());
+
+        setHasOptionsMenu(true);
     }
 
     @Nullable
