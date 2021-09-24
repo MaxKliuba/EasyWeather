@@ -15,6 +15,7 @@ import com.maxclub.easyweather.utils.TextDrawable;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemTouchHelperSimpleCallback extends ItemTouchHelper.SimpleCallback {
+
     private ColorDrawable mSwipeBackground;
     private Drawable mIcon;
     private TextDrawable mText;

@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class DateTimeHelper {
+
     public static String getFormattedTime(Context context, Date date) {
         String pattern = DateFormat.is24HourFormat(context) ? "HH:mm" : "hh:mm a";
         SimpleDateFormat simpleDateFormat =

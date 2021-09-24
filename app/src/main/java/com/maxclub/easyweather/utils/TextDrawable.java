@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 
 public class TextDrawable extends Drawable {
+
     private Resources mResources;
     private int mColor = Color.WHITE;
     private int mTextSize = 16;

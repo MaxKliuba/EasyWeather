@@ -3,6 +3,7 @@ package com.maxclub.easyweather.utils;
 import java.util.Locale;
 
 public class LocaleHelper {
+
     public static final String STANDARD = "standard";
     public static final String IMPERIAL = "imperial";
     public static final String METRIC = "metric";

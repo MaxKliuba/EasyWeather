@@ -7,6 +7,7 @@ import android.view.View;
 import java.util.List;
 
 public class ViewHelper {
+
     public static void switchView(View view, List<View> views) {
         for (View container : views) {
             if (container.equals(view)) {

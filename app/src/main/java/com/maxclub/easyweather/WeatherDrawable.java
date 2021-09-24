@@ -3,8 +3,9 @@ package com.maxclub.easyweather;
 import android.graphics.drawable.Drawable;
 
 public class WeatherDrawable {
-    private String mAssetPath;
-    private String mName;
+
+    private final String mAssetPath;
+    private final String mName;
     private Drawable mDrawable;
 
     public WeatherDrawable(String assetPath) {

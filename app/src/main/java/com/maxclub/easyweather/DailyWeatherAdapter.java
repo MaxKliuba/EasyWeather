@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.maxclub.easyweather.api.model.OneCallWeatherData;
@@ -21,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapter.DailyWeatherHolder> {
+
     private final Context mContext;
     private final WeatherDrawableManager mWeatherDrawableManager;
     private List<OneCallWeatherData.Daily> mItems = new ArrayList<>();
@@ -61,6 +64,9 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
     }
 
     public class DailyWeatherHolder extends RecyclerView.ViewHolder {
+
+        private static final String DIALOG_DAILY_WEATHER = "DialogDailyWeather";
+
         private final TextView mDateTextView;
         private final ImageView mIconImageView;
         private final TextView mTempTextView;
@@ -76,7 +82,9 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
+                    DailyWeatherDialogFragment dialog = DailyWeatherDialogFragment.newInstance(mDailyWeather);
+                    dialog.show(fragmentManager, DIALOG_DAILY_WEATHER);
                 }
             });
         }

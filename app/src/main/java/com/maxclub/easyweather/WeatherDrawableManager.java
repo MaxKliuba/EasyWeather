@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class WeatherDrawableManager {
+
     private static final String TAG = "WeatherDrawableManager";
 
     private static final String WEATHER_DRAWABLES_FOLDER = "weather_drawables";

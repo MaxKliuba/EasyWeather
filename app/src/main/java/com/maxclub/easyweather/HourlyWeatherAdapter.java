@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdapter.HourlyWeatherHolder> {
+
     private final Context mContext;
     private final WeatherDrawableManager mWeatherDrawableManager;
     private List<OneCallWeatherData.Hourly> mItems = new ArrayList<>();
@@ -63,6 +64,7 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
     }
 
     public class HourlyWeatherHolder extends RecyclerView.ViewHolder {
+
         private final TextView mTimeTextView;
         private final ImageView mIconImageView;
         private final TextView mTempTextView;
