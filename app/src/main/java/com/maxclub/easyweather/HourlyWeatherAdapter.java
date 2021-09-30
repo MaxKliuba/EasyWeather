@@ -68,7 +68,7 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
         private final TextView mTimeTextView;
         private final ImageView mIconImageView;
         private final TextView mTempTextView;
-        private final TextView mHumidityTextView;
+        private final TextView mPopTextView;
         private final TextView mUviTextView;
         private final TextView mWindTextView;
         private OneCallWeatherData.Hourly mHourlyWeather;
@@ -79,7 +79,7 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
             mTimeTextView = (TextView) itemView.findViewById(R.id.hourly_time_text_view);
             mIconImageView = (ImageView) itemView.findViewById(R.id.hourly_icon_image_view);
             mTempTextView = (TextView) itemView.findViewById(R.id.hourly_temp_text_view);
-            mHumidityTextView = (TextView) itemView.findViewById(R.id.hourly_humidity_text_view);
+            mPopTextView = (TextView) itemView.findViewById(R.id.hourly_pop_text_view);
             mUviTextView = (TextView) itemView.findViewById(R.id.hourly_uvi_text_view);
             mWindTextView = (TextView) itemView.findViewById(R.id.hourly_wind_text_view);
         }
@@ -122,8 +122,8 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
                     break;
             }
 
-            mHumidityTextView.setText(mContext.getString(R.string.humidity_label,
-                    mHourlyWeather.humidity));
+            mPopTextView.setText(mContext.getString(R.string.pop_label,
+                    (int) (mHourlyWeather.pop / 100)));
             mUviTextView.setText(mContext.getString(R.string.uvi_label,
                     mHourlyWeather.uvi));
         }

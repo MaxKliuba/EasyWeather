@@ -34,7 +34,7 @@
                 android:layout_height="20dp"
                 android:layout_marginVertical="2dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_humidity_30"
+                android:src="@drawable/ic_pop_30"
                 tools:ignore="ContentDescription" />
 
             <ImageView

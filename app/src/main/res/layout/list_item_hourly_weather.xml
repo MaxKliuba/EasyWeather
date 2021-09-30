@@ -39,7 +39,7 @@
         tools:text="-20° (-15°)" />
 
     <TextView
-        android:id="@+id/hourly_humidity_text_view"
+        android:id="@+id/hourly_pop_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"

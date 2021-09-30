@@ -19,9 +19,17 @@ public class DateTimeHelper {
         return simpleDateFormat.format(date);
     }
 
-    public static String getFormattedDate(Context context, Date date) {
+    public static String getFormattedShortDate(Context context, Date date) {
         SimpleDateFormat simpleDateFormat =
                 new SimpleDateFormat("EE dd MMM", Locale.getDefault());
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
+
+        return simpleDateFormat.format(date);
+    }
+
+    public static String getFormattedFullDate(Context context, Date date) {
+        SimpleDateFormat simpleDateFormat =
+                new SimpleDateFormat("EEEE dd MMMM", Locale.getDefault());
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
 
         return simpleDateFormat.format(date);

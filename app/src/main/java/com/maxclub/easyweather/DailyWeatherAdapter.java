@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.maxclub.easyweather.api.model.OneCallWeatherData;
 import com.maxclub.easyweather.utils.DateTimeHelper;
 import com.maxclub.easyweather.utils.LocaleHelper;
+import com.maxclub.easyweather.utils.StringHelper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +28,7 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
     private final Context mContext;
     private final WeatherDrawableManager mWeatherDrawableManager;
     private List<OneCallWeatherData.Daily> mItems = new ArrayList<>();
-    private long timezoneOffset;
+    private int timezoneOffset;
 
     public DailyWeatherAdapter(Context context) {
         mContext = context;
@@ -83,7 +84,7 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
                 @Override
                 public void onClick(View view) {
                     FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
-                    DailyWeatherDialogFragment dialog = DailyWeatherDialogFragment.newInstance(mDailyWeather);
+                    DailyWeatherDialogFragment dialog = DailyWeatherDialogFragment.newInstance(mDailyWeather, timezoneOffset);
                     dialog.show(fragmentManager, DIALOG_DAILY_WEATHER);
                 }
             });
@@ -92,23 +93,24 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
         public void bind(OneCallWeatherData.Daily dailyWeather) {
             mDailyWeather = dailyWeather;
 
-            mDateTextView.setText(DateTimeHelper.getFormattedDate(mContext,
-                    new Date((mDailyWeather.dt + timezoneOffset) * 1000L)));
+            mDateTextView.setText(StringHelper.capitalize(
+                    DateTimeHelper.getFormattedShortDate(mContext,
+                            new Date((mDailyWeather.dt + timezoneOffset) * 1000L))));
             mIconImageView.setImageDrawable(
                     mWeatherDrawableManager.getDrawableByName(mDailyWeather.weather.get(0).icon)
             );
 
             switch (LocaleHelper.getUnits()) {
                 case LocaleHelper.IMPERIAL:
-                    mTempTextView.setText(mContext.getString(R.string.temp_min_max_f_label,
+                    mTempTextView.setText(mContext.getString(R.string.temp_max_min_f_label,
                             mDailyWeather.temp.max, mDailyWeather.temp.min));
                     break;
                 case LocaleHelper.STANDARD:
-                    mTempTextView.setText(mContext.getString(R.string.temp_min_max_k_label,
+                    mTempTextView.setText(mContext.getString(R.string.temp_max_min_k_label,
                             mDailyWeather.temp.max, mDailyWeather.temp.min));
                     break;
                 default:
-                    mTempTextView.setText(mContext.getString(R.string.temp_min_max_c_label,
+                    mTempTextView.setText(mContext.getString(R.string.temp_max_min_c_label,
                             mDailyWeather.temp.max, mDailyWeather.temp.min));
                     break;
             }

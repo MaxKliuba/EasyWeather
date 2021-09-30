@@ -20,7 +20,7 @@
     <string name="location_enabling_button">Settings</string>
     <string name="connection_error_text">Network request failed</string>
     <string name="retry_button">Retry</string>
-    <string name="waiting_for_data">Waiting for data...</string>
+    <string name="waiting_for_data">Waiting for data…</string>
     <string name="temp_c_label">%1$.0f°C</string>
     <string name="temp_f_label">%1$.0f°F</string>
     <string name="temp_k_label">%1$.0fK</string>
@@ -30,6 +30,32 @@
     <string name="wind_label_text">Wind</string>
     <string name="wind_m_s_label">%1$.1f m/s %2$s</string>
     <string name="wind_mph_label">%1$.1f mph %2$s</string>
+    <string name="pop_label_text">Precipitation</string>
+    <string name="pop_label">%1$d%%</string>
+    <string name="uvi_label_text">UV index</string>
+    <string name="uvi_label">%1$.1f</string>
+    <string name="visibility_label_text">Visibility</string>
+    <string name="visibility_label">%1$.1f km</string>
+    <string name="humidity_label_text">Humidity</string>
+    <string name="humidity_label">%1$d%%</string>
+    <string name="pressure_label_text">Pressure</string>
+    <string name="pressure_label">%1$d hPa</string>
+    <string name="dew_point_label_text">Dew point</string>
+    <string name="sunrise_label_text">Sunrise</string>
+    <string name="sunrise_label">%1$s</string>
+    <string name="sunset_label_text">Sunset</string>
+    <string name="sunset_label">%1$s</string>
+    <string name="now_label">Now</string>
+    <string name="temp_and_feels_like_c_label">%1$.0f° (%2$.0f°)</string>
+    <string name="temp_and_feels_like_f_label">%1$.0f° (%2$.0f°)</string>
+    <string name="temp_and_feels_like_k_label">%1$.0f (%2$.0f)</string>
+    <string name="temp_max_min_c_label">%1$.0f°C / %2$.0f°C</string>
+    <string name="temp_max_min_f_label">%1$.0f°F / %2$.0f°F</string>
+    <string name="temp_max_min_k_label">%1$.0fK / %2$.0fK</string>
+    <string name="night_temp_label">Night</string>
+    <string name="morning_temp_label">Morning</string>
+    <string name="day_temp_label">Day</string>
+    <string name="evening_temp_label">Evening</string>
     <string-array name="wind_directions">
         <item>↓ N</item>
         <item>↙ NE</item>
@@ -50,21 +76,4 @@
         <item>→</item>
         <item>↘</item>
     </string-array>
-    <string name="visibility_label_text">Visibility</string>
-    <string name="visibility_label">%1$d m</string>
-    <string name="humidity_label_text">Humidity</string>
-    <string name="humidity_label">%1$d%%</string>
-    <string name="uvi_label_text">UV index</string>
-    <string name="uvi_label">%1$.1f</string>
-    <string name="sunrise_label_text">Sunrise</string>
-    <string name="sunrise_label">%1$s</string>
-    <string name="sunset_label_text">Sunset</string>
-    <string name="sunset_label">%1$s</string>
-    <string name="now_label">Now</string>
-    <string name="temp_and_feels_like_c_label">%1$.0f° (%2$.0f°)</string>
-    <string name="temp_and_feels_like_f_label">%1$.0f° (%2$.0f°)</string>
-    <string name="temp_and_feels_like_k_label">%1$.0f (%2$.0f)</string>
-    <string name="temp_min_max_c_label">%1$.0f°C / %2$.0f°C</string>
-    <string name="temp_min_max_f_label">%1$.0f°F / %2$.0f°F</string>
-    <string name="temp_min_max_k_label">%1$.0fK / %2$.0fK</string>
 </resources>

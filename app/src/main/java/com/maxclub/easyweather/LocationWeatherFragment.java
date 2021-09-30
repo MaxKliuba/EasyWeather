@@ -99,11 +99,11 @@ public class LocationWeatherFragment extends Fragment {
     private TextView mMainTempTextView;
     private TextView mMainFeelsLikeTextView;
     private TextView mWindTextView;
+    private TextView mPopTextView;
+    private TextView mUviTextView;
     private TextView mVisibilityTextView;
     private TextView mHumidityTextView;
-    private TextView mUviTextView;
-    private TextView mSunriseTextView;
-    private TextView mSunsetTextView;
+    private TextView mPressureTextView;
 
     private RecyclerView mHourlyWeatherRecyclerView;
     private HourlyWeatherAdapter mHourlyWeatherAdapter;
@@ -243,11 +243,11 @@ public class LocationWeatherFragment extends Fragment {
         mMainTempTextView = (TextView) view.findViewById(R.id.main_temp_text_view);
         mMainFeelsLikeTextView = (TextView) view.findViewById(R.id.main_feels_like_text_view);
         mWindTextView = (TextView) view.findViewById(R.id.wind_text_view);
+        mPopTextView = (TextView) view.findViewById(R.id.pop_text_view);
+        mUviTextView = (TextView) view.findViewById(R.id.uvi_text_view);
         mVisibilityTextView = (TextView) view.findViewById(R.id.visibility_text_view);
         mHumidityTextView = (TextView) view.findViewById(R.id.humidity_text_view);
-        mUviTextView = (TextView) view.findViewById(R.id.uvi_text_view);
-        mSunriseTextView = (TextView) view.findViewById(R.id.sunrise_text_view);
-        mSunsetTextView = (TextView) view.findViewById(R.id.sunset_text_view);
+        mPressureTextView = (TextView) view.findViewById(R.id.pressure_text_view);
 
         mHourlyWeatherRecyclerView = (RecyclerView) view.findViewById(R.id.hourly_weather_recycler_view);
         mHourlyWeatherRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
@@ -584,20 +584,16 @@ public class LocationWeatherFragment extends Fragment {
                             mOneCallWeatherData.current.windSpeed, windDirection));
                     break;
             }
-            mVisibilityTextView.setText(getString(R.string.visibility_label,
-                    mOneCallWeatherData.current.visibility));
-            mHumidityTextView.setText(getString(R.string.humidity_label,
-                    mOneCallWeatherData.current.humidity));
+            mPopTextView.setText(getString(R.string.pop_label,
+                    (int) (mOneCallWeatherData.hourly.get(0).pop * 100)));
             mUviTextView.setText(getString(R.string.uvi_label,
                     mOneCallWeatherData.current.uvi));
-            mSunriseTextView.setText(getString(R.string.sunrise_label,
-                    DateTimeHelper.getFormattedTime(getActivity(),
-                            new Date((mOneCallWeatherData.current.sunrise
-                                    + mOneCallWeatherData.timezoneOffset) * 1000L))));
-            mSunsetTextView.setText(getString(R.string.sunset_label,
-                    DateTimeHelper.getFormattedTime(getActivity(),
-                            new Date((mOneCallWeatherData.current.sunset
-                                    + mOneCallWeatherData.timezoneOffset) * 1000L))));
+            mVisibilityTextView.setText(getString(R.string.visibility_label,
+                    mOneCallWeatherData.current.visibility / 1000.0f));
+            mHumidityTextView.setText(getString(R.string.humidity_label,
+                    mOneCallWeatherData.current.humidity));
+            mPressureTextView.setText(getString(R.string.pressure_label,
+                    mOneCallWeatherData.current.pressure));
 
             if (mHourlyWeatherAdapter == null) {
                 mHourlyWeatherAdapter = new HourlyWeatherAdapter(getActivity());
