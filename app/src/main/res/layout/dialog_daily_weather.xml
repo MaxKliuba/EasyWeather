@@ -8,7 +8,7 @@
     app:cardCornerRadius="16dp">
 
     <include
-        layout="@layout/weather_main_card"
+        layout="@layout/weather_daily_details_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
