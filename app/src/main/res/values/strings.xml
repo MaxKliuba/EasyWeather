@@ -4,6 +4,7 @@
     <string name="search_city">Search city</string>
     <string name="search_city_query_hint">Enter the city name</string>
     <string name="add_new_city">Add new city</string>
+    <string name="settings">Settings</string>
     <string name="save_city">Save city</string>
     <string name="delete_city">Delete city</string>
     <string name="delete">DELETE</string>
@@ -35,7 +36,8 @@
     <string name="uvi_label_text">UV index</string>
     <string name="uvi_label">%1$.1f</string>
     <string name="visibility_label_text">Visibility</string>
-    <string name="visibility_label">%1$.1f km</string>
+    <string name="visibility_km_label">%1$.1f km</string>
+    <string name="visibility_mi_label">%1$.1f mi</string>
     <string name="humidity_label_text">Humidity</string>
     <string name="humidity_label">%1$d%%</string>
     <string name="pressure_label_text">Pressure</string>

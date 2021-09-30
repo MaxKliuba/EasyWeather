@@ -28,7 +28,6 @@ import com.maxclub.easyweather.api.WeatherApi;
 import com.maxclub.easyweather.api.model.ForecastWeatherData;
 import com.maxclub.easyweather.api.model.OneCallWeatherData;
 import com.maxclub.easyweather.database.model.City;
-import com.maxclub.easyweather.utils.DateTimeHelper;
 import com.maxclub.easyweather.utils.LocaleHelper;
 import com.maxclub.easyweather.utils.StringHelper;
 import com.maxclub.easyweather.utils.ViewHelper;
@@ -36,7 +35,6 @@ import com.maxclub.easyweather.utils.ViewHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -407,6 +405,8 @@ public class SearchWeatherFragment extends Fragment {
                             mOneCallWeatherData.current.feelsLike));
                     mWindTextView.setText(getString(R.string.wind_mph_label,
                             mOneCallWeatherData.current.windSpeed, windDirection));
+                    mVisibilityTextView.setText(getString(R.string.visibility_mi_label,
+                            mOneCallWeatherData.current.visibility / 1609.344f));
                     break;
                 case LocaleHelper.STANDARD:
                     mMainTempTextView.setText(getString(R.string.temp_k_label,
@@ -415,6 +415,8 @@ public class SearchWeatherFragment extends Fragment {
                             mOneCallWeatherData.current.feelsLike));
                     mWindTextView.setText(getString(R.string.wind_m_s_label,
                             mOneCallWeatherData.current.windSpeed, windDirection));
+                    mVisibilityTextView.setText(getString(R.string.visibility_km_label,
+                            mOneCallWeatherData.current.visibility / 1000.0f));
                     break;
                 default:
                     mMainTempTextView.setText(getString(R.string.temp_c_label,
@@ -423,13 +425,15 @@ public class SearchWeatherFragment extends Fragment {
                             mOneCallWeatherData.current.feelsLike));
                     mWindTextView.setText(getString(R.string.wind_m_s_label,
                             mOneCallWeatherData.current.windSpeed, windDirection));
+                    mVisibilityTextView.setText(getString(R.string.visibility_km_label,
+                            mOneCallWeatherData.current.visibility / 1000.0f));
                     break;
             }
             mPopTextView.setText(getString(R.string.pop_label,
                     (int) (mOneCallWeatherData.hourly.get(0).pop * 100)));
             mUviTextView.setText(getString(R.string.uvi_label,
                     mOneCallWeatherData.current.uvi));
-            mVisibilityTextView.setText(getString(R.string.visibility_label,
+            mVisibilityTextView.setText(getString(R.string.visibility_km_label,
                     mOneCallWeatherData.current.visibility / 1000.0f));
             mHumidityTextView.setText(getString(R.string.humidity_label,
                     mOneCallWeatherData.current.humidity));

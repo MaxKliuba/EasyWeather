@@ -11,7 +11,7 @@ public class ViewHelper {
     public static void switchView(View view, List<View> views) {
         for (View container : views) {
             if (container.equals(view)) {
-                if (view.getVisibility() == View.VISIBLE) {
+                if (view.getVisibility() == View.VISIBLE && view.getAlpha() == 1.0f) {
                     continue;
                 }
 
