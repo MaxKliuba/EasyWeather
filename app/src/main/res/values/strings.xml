@@ -31,7 +31,7 @@
     <string name="wind_label_text">Wind</string>
     <string name="wind_m_s_label">%1$.1f m/s %2$s</string>
     <string name="wind_mph_label">%1$.1f mph %2$s</string>
-    <string name="pop_label_text">Precipitation</string>
+    <string name="pop_label_text">Probability of precipitation</string>
     <string name="pop_label">%1$d%%</string>
     <string name="uvi_label_text">UV index</string>
     <string name="uvi_label">%1$.1f</string>
@@ -66,7 +66,6 @@
     <string name="fahrenheit_label">°F</string>
     <string name="kelvin">K</string>
     <string name="openweather_api">OpenWeather API</string>
-
     <string-array name="wind_directions">
         <item>↓ N</item>
         <item>↙ NE</item>

@@ -1,0 +1,89 @@
+<resources>
+    <string name="app_name">EasyWeather</string>
+    <string name="current_location">Текущее местоположение</string>
+    <string name="search_city">Поиск</string>
+    <string name="search_city_query_hint">Поиск</string>
+    <string name="add_new_item">Добавить</string>
+    <string name="settings">Настройки</string>
+    <string name="save_city">Сохранить</string>
+    <string name="delete_city">Удалить</string>
+    <string name="delete">УДАЛИТЬ</string>
+    <string name="snackbar_delete_text">Элемент был удален из списка</string>
+    <string name="snackbar_undo_text">ОТМЕНИТЬ</string>
+    <string name="remove_dialog_title">Удаление</string>
+    <string name="remove_dialog_message">Вы уверены, что хотите удалить этот элемент?</string>
+    <string name="google_play_services_not_found">Сервисы Google Play сейчас недоступны</string>
+    <string name="permission_text_1">Пожалуйста, разрешите этой программе получить доступ к данным о местоположении устройства</string>
+    <string name="permission_text_2">Приложение будет иметь доступ к данным о местоположении только тогда, когда вы им пользуетесь</string>
+    <string name="settings_button">Настройки</string>
+    <string name="location_enabling_text_1">Геолокация отключена</string>
+    <string name="location_enabling_text_2">Включите, пожалуйста, геолокацию</string>
+    <string name="location_enabling_button">Настройки</string>
+    <string name="connection_error_text">Сетевой запрос не выполнен</string>
+    <string name="retry_button">Повторить попытку</string>
+    <string name="waiting_for_data">Ожидания данных…</string>
+    <string name="temp_c_label">%1$.0f°C</string>
+    <string name="temp_f_label">%1$.0f°F</string>
+    <string name="temp_k_label">%1$.0fK</string>
+    <string name="feels_like_temp_c_label">Ощущается как %1$.0f°C</string>
+    <string name="feels_like_temp_f_label">Ощущается как %1$.0f°F</string>
+    <string name="feels_like_temp_k_label">Ощущается как %1$.0fK</string>
+    <string name="wind_label_text">Ветер</string>
+    <string name="wind_m_s_label">%1$.1f м/с %2$s</string>
+    <string name="wind_mph_label">%1$.1f mph %2$s</string>
+    <string name="pop_label_text">Вероятность осадков</string>
+    <string name="pop_label">%1$d%%</string>
+    <string name="uvi_label_text">Индекс УФ</string>
+    <string name="uvi_label">%1$.1f</string>
+    <string name="visibility_label_text">Видимость</string>
+    <string name="visibility_km_label">%1$.1f км</string>
+    <string name="visibility_mi_label">%1$.1f миль</string>
+    <string name="humidity_label_text">Влажность</string>
+    <string name="humidity_label">%1$d%%</string>
+    <string name="pressure_label_text">Давление</string>
+    <string name="pressure_label">%1$d гПа</string>
+    <string name="dew_point_label_text">Точка росы</string>
+    <string name="sunrise_label_text">Восход</string>
+    <string name="sunrise_label">%1$s</string>
+    <string name="sunset_label_text">Закат</string>
+    <string name="sunset_label">%1$s</string>
+    <string name="now_label">Сейчас</string>
+    <string name="temp_and_feels_like_c_label">%1$.0f° (%2$.0f°)</string>
+    <string name="temp_and_feels_like_f_label">%1$.0f° (%2$.0f°)</string>
+    <string name="temp_and_feels_like_k_label">%1$.0f (%2$.0f)</string>
+    <string name="temp_max_min_c_label">%1$.0f°C / %2$.0f°C</string>
+    <string name="temp_max_min_f_label">%1$.0f°F / %2$.0f°F</string>
+    <string name="temp_max_min_k_label">%1$.0fK / %2$.0fK</string>
+    <string name="night_temp_label">Ночь</string>
+    <string name="morning_temp_label">Утро</string>
+    <string name="day_temp_label">День</string>
+    <string name="evening_temp_label">Вечер</string>
+    <string name="settings_title">Настройки</string>
+    <string name="theme_label">Тема</string>
+    <string name="auto_label">A</string>
+    <string name="units_label">Единицы измерения</string>
+    <string name="celsius_label">°C</string>
+    <string name="fahrenheit_label">°F</string>
+    <string name="kelvin">K</string>
+    <string name="openweather_api">OpenWeather API</string>
+    <string-array name="wind_directions">
+        <item>↓ С</item>
+        <item>↙ С-В</item>
+        <item>← В</item>
+        <item>↖ Ю-В</item>
+        <item>↑ Ю</item>
+        <item>↗ Ю-З</item>
+        <item>→ З</item>
+        <item>↘ С-З</item>
+    </string-array>
+    <string-array name="wind_direction_arrows">
+        <item>↓</item>
+        <item>↙</item>
+        <item>←</item>
+        <item>↖</item>
+        <item>↑</item>
+        <item>↗</item>
+        <item>→</item>
+        <item>↘</item>
+    </string-array>
+</resources>

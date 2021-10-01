@@ -264,10 +264,15 @@ public class CityListFragment extends Fragment {
 
             public void bind(City city) {
                 mCity = city;
-                if (city.country != null) {
-                    mCityNameTextView.setText(String.format("%s, %s", city.name, city.country));
+
+                if (getItemViewType() == CURRENT_LOCATION) {
+                    mCityNameTextView.setText(getString(R.string.current_location));
                 } else {
-                    mCityNameTextView.setText(city.name);
+                    if (city.country != null) {
+                        mCityNameTextView.setText(String.format("%s, %s", city.name, city.country));
+                    } else {
+                        mCityNameTextView.setText(city.name);
+                    }
                 }
             }
         }

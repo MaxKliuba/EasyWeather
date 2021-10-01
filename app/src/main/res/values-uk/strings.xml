@@ -1,0 +1,89 @@
+<resources>
+    <string name="app_name">EasyWeather</string>
+    <string name="current_location">Поточне місцезнаходження</string>
+    <string name="search_city">Пошук</string>
+    <string name="search_city_query_hint">Пошук</string>
+    <string name="add_new_item">Додати</string>
+    <string name="settings">Налаштування</string>
+    <string name="save_city">Зберегти</string>
+    <string name="delete_city">Видалити</string>
+    <string name="delete">ВИДАЛИТИ</string>
+    <string name="snackbar_delete_text">Елемент було видалено зі списку</string>
+    <string name="snackbar_undo_text">СКАСУВАТИ</string>
+    <string name="remove_dialog_title">Видалення</string>
+    <string name="remove_dialog_message">Ви впевнені, що хочете видалити цей елемент?</string>
+    <string name="google_play_services_not_found">Сервіси Google Play зараз недоступні</string>
+    <string name="permission_text_1">Будь ласка, дозвольте цій програмі отримати доступ до геоданих пристрою</string>
+    <string name="permission_text_2">Додаток матиме доступ до геоданих лише тоді, коли ви ним користуєтеся</string>
+    <string name="settings_button">Налаштування</string>
+    <string name="location_enabling_text_1">Місцезнаходження вимкнено</string>
+    <string name="location_enabling_text_2">Увімкніть, будь ласка, місцезнаходження</string>
+    <string name="location_enabling_button">Налаштування</string>
+    <string name="connection_error_text">Не вдалося надіслати запит до мережі</string>
+    <string name="retry_button">Повторити спробу</string>
+    <string name="waiting_for_data">Очікування даних…</string>
+    <string name="temp_c_label">%1$.0f°C</string>
+    <string name="temp_f_label">%1$.0f°F</string>
+    <string name="temp_k_label">%1$.0fK</string>
+    <string name="feels_like_temp_c_label">Відчувається як %1$.0f°C</string>
+    <string name="feels_like_temp_f_label">Відчувається як %1$.0f°F</string>
+    <string name="feels_like_temp_k_label">Відчувається як %1$.0fK</string>
+    <string name="wind_label_text">Вітер</string>
+    <string name="wind_m_s_label">%1$.1f м/с %2$s</string>
+    <string name="wind_mph_label">%1$.1f mph %2$s</string>
+    <string name="pop_label_text">Ймовірність опадів</string>
+    <string name="pop_label">%1$d%%</string>
+    <string name="uvi_label_text">Індекс УФ</string>
+    <string name="uvi_label">%1$.1f</string>
+    <string name="visibility_label_text">Видимість</string>
+    <string name="visibility_km_label">%1$.1f км</string>
+    <string name="visibility_mi_label">%1$.1f миль</string>
+    <string name="humidity_label_text">Вологість</string>
+    <string name="humidity_label">%1$d%%</string>
+    <string name="pressure_label_text">Тиск</string>
+    <string name="pressure_label">%1$d гПа</string>
+    <string name="dew_point_label_text">Точка роси</string>
+    <string name="sunrise_label_text">Схід сонця</string>
+    <string name="sunrise_label">%1$s</string>
+    <string name="sunset_label_text">Захід сонця</string>
+    <string name="sunset_label">%1$s</string>
+    <string name="now_label">Зараз</string>
+    <string name="temp_and_feels_like_c_label">%1$.0f° (%2$.0f°)</string>
+    <string name="temp_and_feels_like_f_label">%1$.0f° (%2$.0f°)</string>
+    <string name="temp_and_feels_like_k_label">%1$.0f (%2$.0f)</string>
+    <string name="temp_max_min_c_label">%1$.0f°C / %2$.0f°C</string>
+    <string name="temp_max_min_f_label">%1$.0f°F / %2$.0f°F</string>
+    <string name="temp_max_min_k_label">%1$.0fK / %2$.0fK</string>
+    <string name="night_temp_label">Ніч</string>
+    <string name="morning_temp_label">Ранок</string>
+    <string name="day_temp_label">День</string>
+    <string name="evening_temp_label">Вечір</string>
+    <string name="settings_title">Налаштування</string>
+    <string name="theme_label">Тема</string>
+    <string name="auto_label">A</string>
+    <string name="units_label">Одиниці вимірювання</string>
+    <string name="celsius_label">°C</string>
+    <string name="fahrenheit_label">°F</string>
+    <string name="kelvin">K</string>
+    <string name="openweather_api">OpenWeather API</string>
+    <string-array name="wind_directions">
+        <item>↓ Пн</item>
+        <item>↙ Пн-Сх</item>
+        <item>← Сх</item>
+        <item>↖ Пд-Сх</item>
+        <item>↑ Пд</item>
+        <item>↗ Пд-Зх</item>
+        <item>→ Зх</item>
+        <item>↘ Пн-Зх</item>
+    </string-array>
+    <string-array name="wind_direction_arrows">
+        <item>↓</item>
+        <item>↙</item>
+        <item>←</item>
+        <item>↖</item>
+        <item>↑</item>
+        <item>↗</item>
+        <item>→</item>
+        <item>↘</item>
+    </string-array>
+</resources>
