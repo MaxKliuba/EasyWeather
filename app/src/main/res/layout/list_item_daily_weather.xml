@@ -19,7 +19,9 @@
             android:id="@+id/daily_date_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:gravity="center"
+            android:maxLines="1"
             android:textSize="20sp"
             android:textStyle="bold"
             tools:text="Mon Sep 20" />
@@ -39,7 +41,9 @@
             android:id="@+id/daily_temp_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:gravity="center"
+            android:maxLines="1"
             android:textSize="16sp"
             android:textStyle="bold"
             tools:text="20°C / 15°C" />

@@ -94,6 +94,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@string/night_temp_label"
                         android:textColor="@color/label_text_color"
                         android:textSize="12sp"
@@ -119,6 +121,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@string/morning_temp_label"
                         android:textColor="@color/label_text_color"
                         android:textSize="12sp"
@@ -144,6 +148,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@string/day_temp_label"
                         android:textColor="@color/label_text_color"
                         android:textSize="12sp"
@@ -169,6 +175,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@string/evening_temp_label"
                         android:textColor="@color/label_text_color"
                         android:textSize="12sp"
@@ -226,6 +234,8 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:text="@string/wind_label_text"
                                 android:textColor="@color/label_text_color"
                                 android:textSize="12sp"
@@ -235,6 +245,8 @@
                                 android:id="@+id/dialog_daily_wind_text_view"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 tools:text="1 m/s, ↓ S" />
@@ -269,6 +281,8 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:text="@string/uvi_label_text"
                                 android:textColor="@color/label_text_color"
                                 android:textSize="12sp"
@@ -278,6 +292,8 @@
                                 android:id="@+id/dialog_daily_uvi_text_view"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 tools:text="0.5" />
@@ -312,6 +328,8 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:text="@string/humidity_label_text"
                                 android:textColor="@color/label_text_color"
                                 android:textSize="12sp"
@@ -321,6 +339,8 @@
                                 android:id="@+id/dialog_daily_humidity_text_view"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 tools:text="50%" />
@@ -355,6 +375,8 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:text="@string/sunrise_label_text"
                                 android:textColor="@color/label_text_color"
                                 android:textSize="12sp"
@@ -364,6 +386,8 @@
                                 android:id="@+id/dialog_daily_sunrise_text_view"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 tools:text="06:00 AM" />
@@ -418,6 +442,8 @@
                                 android:id="@+id/dialog_daily_pop_text_view"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 tools:text="50%" />
@@ -452,6 +478,8 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:text="@string/dew_point_label_text"
                                 android:textColor="@color/label_text_color"
                                 android:textSize="12sp"
@@ -461,6 +489,8 @@
                                 android:id="@+id/dialog_daily_dew_point_text_view"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 tools:text="10°C" />
@@ -495,6 +525,8 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:text="@string/pressure_label_text"
                                 android:textColor="@color/label_text_color"
                                 android:textSize="12sp"
@@ -504,6 +536,8 @@
                                 android:id="@+id/dialog_daily_pressure_text_view"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 tools:text="1026 hPa" />
@@ -538,6 +572,8 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:text="@string/sunset_label_text"
                                 android:textColor="@color/label_text_color"
                                 android:textSize="12sp"
@@ -547,6 +583,8 @@
                                 android:id="@+id/dialog_daily_sunset_text_view"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 tools:text="06:00 AM" />

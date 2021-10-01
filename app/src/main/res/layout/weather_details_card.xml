@@ -47,6 +47,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@string/wind_label_text"
                         android:textColor="@color/label_text_color"
                         android:textSize="12sp"
@@ -56,9 +58,11 @@
                         android:id="@+id/wind_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        tools:text="10.7 м/с, ↓" />
+                        tools:text="10.7 м/с, ↓ N" />
 
                 </LinearLayout>
 
@@ -90,6 +94,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@string/uvi_label_text"
                         android:textColor="@color/label_text_color"
                         android:textSize="12sp"
@@ -99,6 +105,8 @@
                         android:id="@+id/uvi_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         tools:text="0.5" />
@@ -133,6 +141,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@string/humidity_label_text"
                         android:textColor="@color/label_text_color"
                         android:textSize="12sp"
@@ -142,6 +152,8 @@
                         android:id="@+id/humidity_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         tools:text="50%" />
@@ -196,6 +208,8 @@
                         android:id="@+id/pop_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         tools:text="50%" />
@@ -230,6 +244,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@string/visibility_label_text"
                         android:textColor="@color/label_text_color"
                         android:textSize="12sp"
@@ -239,9 +255,11 @@
                         android:id="@+id/visibility_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        tools:text="10000 m" />
+                        tools:text="10.0 km" />
 
                 </LinearLayout>
 
@@ -273,6 +291,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@string/pressure_label_text"
                         android:textColor="@color/label_text_color"
                         android:textSize="12sp"
@@ -282,6 +302,8 @@
                         android:id="@+id/pressure_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         tools:text="1026 hPa" />
