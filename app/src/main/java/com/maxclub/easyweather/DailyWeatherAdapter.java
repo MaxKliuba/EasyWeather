@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.maxclub.easyweather.api.model.OneCallWeatherData;
 import com.maxclub.easyweather.utils.DateTimeHelper;
-import com.maxclub.easyweather.utils.LocaleHelper;
 import com.maxclub.easyweather.utils.StringHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -100,12 +99,12 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
                     mWeatherDrawableManager.getDrawableByName(mDailyWeather.weather.get(0).icon)
             );
 
-            switch (LocaleHelper.getUnits()) {
-                case LocaleHelper.IMPERIAL:
+            switch (SettingsPreferences.getUnits(mContext)) {
+                case SettingsPreferences.IMPERIAL:
                     mTempTextView.setText(mContext.getString(R.string.temp_max_min_f_label,
                             mDailyWeather.temp.max, mDailyWeather.temp.min));
                     break;
-                case LocaleHelper.STANDARD:
+                case SettingsPreferences.STANDARD:
                     mTempTextView.setText(mContext.getString(R.string.temp_max_min_k_label,
                             mDailyWeather.temp.max, mDailyWeather.temp.min));
                     break;

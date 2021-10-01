@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.maxclub.easyweather.api.model.OneCallWeatherData;
 import com.maxclub.easyweather.utils.DateTimeHelper;
-import com.maxclub.easyweather.utils.LocaleHelper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -101,14 +100,14 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
             int index = Math.round(mHourlyWeather.windDeg / 45.0f);
             String windDirection = windDirections[index >= windDirections.length ? 0 : index];
 
-            switch (LocaleHelper.getUnits()) {
-                case LocaleHelper.IMPERIAL:
+            switch (SettingsPreferences.getUnits(mContext)) {
+                case SettingsPreferences.IMPERIAL:
                     mTempTextView.setText(mContext.getString(R.string.temp_and_feels_like_f_label,
                             mHourlyWeather.temp, mHourlyWeather.feelsLike));
                     mWindTextView.setText(mContext.getString(R.string.wind_mph_label,
                             mHourlyWeather.windSpeed, windDirection));
                     break;
-                case LocaleHelper.STANDARD:
+                case SettingsPreferences.STANDARD:
                     mTempTextView.setText(mContext.getString(R.string.temp_and_feels_like_k_label,
                             mHourlyWeather.temp, mHourlyWeather.feelsLike));
                     mWindTextView.setText(mContext.getString(R.string.wind_m_s_label,

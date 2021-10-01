@@ -9,7 +9,7 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_save"
+        android:id="@+id/action_add"
         android:icon="@drawable/ic_baseline_save_24"
         android:title="@string/save_city"
         app:showAsAction="ifRoom" />

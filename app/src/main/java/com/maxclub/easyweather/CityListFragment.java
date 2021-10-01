@@ -1,5 +1,6 @@
 package com.maxclub.easyweather;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -118,15 +119,20 @@ public class CityListFragment extends Fragment {
         inflater.inflate(R.menu.city_list_fragment, menu);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull @NotNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 getActivity().finish();
                 return true;
-            case R.id.action_save:
+            case R.id.action_add:
                 Intent SearchWeatherActivityIntent = SearchWeatherActivity.newIntent(getActivity());
                 startActivity(SearchWeatherActivityIntent);
+                return true;
+            case R.id.action_settings:
+                Intent SettingsActivityIntent = SettingsActivity.newIntent(getActivity());
+                startActivity(SettingsActivityIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

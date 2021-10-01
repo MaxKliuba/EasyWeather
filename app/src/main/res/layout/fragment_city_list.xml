@@ -5,5 +5,4 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fadeScrollbars="true"
-    app:rippleColor="@color/dark_gray"
     android:scrollbars="vertical" />

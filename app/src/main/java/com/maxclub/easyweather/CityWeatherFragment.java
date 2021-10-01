@@ -274,7 +274,7 @@ public class CityWeatherFragment extends Fragment {
         mSwipeRefreshLayout.setRefreshing(true);
         mCompositeDisposable.clear();
         mCompositeDisposable.add(mWeatherApi.getOneCallWeatherData(city.lat, city.lon,
-                "minutely", LocaleHelper.getUnits(), LocaleHelper.getLanguage())
+                "minutely", SettingsPreferences.getUnits(getActivity()), LocaleHelper.getLanguage())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BiConsumer<OneCallWeatherData, Throwable>() {
@@ -314,8 +314,8 @@ public class CityWeatherFragment extends Fragment {
             int index = Math.round(mOneCallWeatherData.current.windDeg / 45.0f);
             String windDirection = windDirections[index >= windDirections.length ? 0 : index];
 
-            switch (LocaleHelper.getUnits()) {
-                case LocaleHelper.IMPERIAL:
+            switch (SettingsPreferences.getUnits(getActivity())) {
+                case SettingsPreferences.IMPERIAL:
                     mMainTempTextView.setText(getString(R.string.temp_f_label,
                             mOneCallWeatherData.current.temp));
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_f_label,
@@ -325,7 +325,7 @@ public class CityWeatherFragment extends Fragment {
                     mVisibilityTextView.setText(getString(R.string.visibility_mi_label,
                             mOneCallWeatherData.current.visibility / 1609.344f));
                     break;
-                case LocaleHelper.STANDARD:
+                case SettingsPreferences.STANDARD:
                     mMainTempTextView.setText(getString(R.string.temp_k_label,
                             mOneCallWeatherData.current.temp));
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_k_label,

@@ -285,7 +285,7 @@ public class SearchWeatherFragment extends Fragment {
             }
         });
 
-        MenuItem saveCityMenuItem = menu.findItem(R.id.action_save);
+        MenuItem saveCityMenuItem = menu.findItem(R.id.action_add);
         saveCityMenuItem.setVisible(mCityData != null);
     }
 
@@ -295,7 +295,7 @@ public class SearchWeatherFragment extends Fragment {
             case android.R.id.home:
                 getActivity().finish();
                 return true;
-            case R.id.action_save:
+            case R.id.action_add:
                 City city = new City();
                 city.id = mCityData.id;
                 city.name = mCityData.name;
@@ -316,7 +316,7 @@ public class SearchWeatherFragment extends Fragment {
         mSwipeRefreshLayout.setRefreshing(true);
         mCompositeDisposable.clear();
         mCompositeDisposable.add(mWeatherApi.getWeatherData(cityName, 1,
-                LocaleHelper.getUnits(), LocaleHelper.getLanguage())
+                SettingsPreferences.getUnits(getActivity()), LocaleHelper.getLanguage())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BiConsumer<ForecastWeatherData, Throwable>() {
@@ -341,7 +341,7 @@ public class SearchWeatherFragment extends Fragment {
         mSwipeRefreshLayout.setRefreshing(true);
         mCompositeDisposable.clear();
         mCompositeDisposable.add(mWeatherApi.getOneCallWeatherData(city.coord.lat, city.coord.lon,
-                "minutely", LocaleHelper.getUnits(), LocaleHelper.getLanguage())
+                "minutely", SettingsPreferences.getUnits(getActivity()), LocaleHelper.getLanguage())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BiConsumer<OneCallWeatherData, Throwable>() {
@@ -397,8 +397,8 @@ public class SearchWeatherFragment extends Fragment {
             int index = Math.round(mOneCallWeatherData.current.windDeg / 45.0f);
             String windDirection = windDirections[index >= windDirections.length ? 0 : index];
 
-            switch (LocaleHelper.getUnits()) {
-                case LocaleHelper.IMPERIAL:
+            switch (SettingsPreferences.getUnits(getActivity())) {
+                case SettingsPreferences.IMPERIAL:
                     mMainTempTextView.setText(getString(R.string.temp_f_label,
                             mOneCallWeatherData.current.temp));
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_f_label,
@@ -408,7 +408,7 @@ public class SearchWeatherFragment extends Fragment {
                     mVisibilityTextView.setText(getString(R.string.visibility_mi_label,
                             mOneCallWeatherData.current.visibility / 1609.344f));
                     break;
-                case LocaleHelper.STANDARD:
+                case SettingsPreferences.STANDARD:
                     mMainTempTextView.setText(getString(R.string.temp_k_label,
                             mOneCallWeatherData.current.temp));
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_k_label,

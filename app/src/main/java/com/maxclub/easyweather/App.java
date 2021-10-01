@@ -2,7 +2,6 @@ package com.maxclub.easyweather;
 
 import android.app.Application;
 
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.room.Room;
 
 import com.maxclub.easyweather.database.CityDao;
@@ -35,9 +34,7 @@ public class App extends Application {
 
         mCityDao.insert(currentLocationCity);
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        SettingsPreferences.setThemeFromPreferences(getApplicationContext());
     }
 
     public static App getInstance() {

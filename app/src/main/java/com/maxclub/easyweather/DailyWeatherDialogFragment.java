@@ -15,7 +15,6 @@ import androidx.fragment.app.DialogFragment;
 
 import com.maxclub.easyweather.api.model.OneCallWeatherData;
 import com.maxclub.easyweather.utils.DateTimeHelper;
-import com.maxclub.easyweather.utils.LocaleHelper;
 import com.maxclub.easyweather.utils.StringHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -96,8 +95,8 @@ public class DailyWeatherDialogFragment extends DialogFragment {
         String[] windDirections = getResources().getStringArray(R.array.wind_directions);
         int index = Math.round(dailyWeather.windDeg / 45.0f);
         String windDirection = windDirections[index >= windDirections.length ? 0 : index];
-        switch (LocaleHelper.getUnits()) {
-            case LocaleHelper.IMPERIAL:
+        switch (SettingsPreferences.getUnits(getActivity())) {
+            case SettingsPreferences.IMPERIAL:
                 mTempMaxMinTextView.setText(getString(R.string.temp_max_min_f_label,
                         dailyWeather.temp.max, dailyWeather.temp.min));
                 mTempNightTextView.setText(getString(R.string.temp_and_feels_like_f_label,
@@ -113,7 +112,7 @@ public class DailyWeatherDialogFragment extends DialogFragment {
                 mDewPointTextView.setText(getString(R.string.temp_f_label,
                         dailyWeather.dewPoint));
                 break;
-            case LocaleHelper.STANDARD:
+            case SettingsPreferences.STANDARD:
                 mTempMaxMinTextView.setText(getString(R.string.temp_max_min_k_label,
                         dailyWeather.temp.max, dailyWeather.temp.min));
                 mTempNightTextView.setText(getString(R.string.temp_and_feels_like_k_label,
