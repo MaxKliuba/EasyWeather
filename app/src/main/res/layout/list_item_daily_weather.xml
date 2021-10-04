@@ -46,7 +46,7 @@
             android:maxLines="1"
             android:textSize="16sp"
             android:textStyle="bold"
-            tools:text="20°C / 15°C" />
+            tools:text="20° | 15°" />
 
     </LinearLayout>
 

@@ -51,9 +51,9 @@
     <string name="temp_and_feels_like_c_label">%1$.0f° (%2$.0f°)</string>
     <string name="temp_and_feels_like_f_label">%1$.0f° (%2$.0f°)</string>
     <string name="temp_and_feels_like_k_label">%1$.0f (%2$.0f)</string>
-    <string name="temp_max_min_c_label">%1$.0f°C / %2$.0f°C</string>
-    <string name="temp_max_min_f_label">%1$.0f°F / %2$.0f°F</string>
-    <string name="temp_max_min_k_label">%1$.0fK / %2$.0fK</string>
+    <string name="temp_max_min_c_label">%1$.0f°C | %2$.0f°C</string>
+    <string name="temp_max_min_f_label">%1$.0f°F | %2$.0f°F</string>
+    <string name="temp_max_min_k_label">%1$.0fK | %2$.0fK</string>
     <string name="night_temp_label">Ночь</string>
     <string name="morning_temp_label">Утро</string>
     <string name="day_temp_label">День</string>
