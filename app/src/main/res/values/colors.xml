@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="dark_gray">#222222</color>
     <color name="tomato">#FE4755</color>
+    <color name="blue_sky">#5BA7FB</color>
     <color name="light_gray">#F0F0F0</color>
     <color name="gray">#AAAAAA</color>
     <color name="snackbar_background_color">#404040</color>

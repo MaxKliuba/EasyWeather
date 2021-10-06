@@ -15,7 +15,7 @@ public class ViewHelper {
                     continue;
                 }
 
-                container.setAlpha(0f);
+                container.setAlpha(0.1f);
                 container.setVisibility(View.VISIBLE);
                 container.animate()
                         .alpha(1.0f)
@@ -30,19 +30,17 @@ public class ViewHelper {
 
             } else {
                 if (container.getVisibility() == View.VISIBLE) {
-                    container.setAlpha(1.0f);
+                    container.setAlpha(0.9f);
                     container.animate()
                             .alpha(0f)
                             .setDuration(300)
                             .setListener(new AnimatorListenerAdapter() {
                                 @Override
                                 public void onAnimationEnd(Animator animation) {
-                                    container.setAlpha(1.0f);
                                     container.setVisibility(View.GONE);
                                 }
                             });
                 } else {
-                    container.setAlpha(1.0f);
                     container.setVisibility(View.GONE);
                 }
             }
