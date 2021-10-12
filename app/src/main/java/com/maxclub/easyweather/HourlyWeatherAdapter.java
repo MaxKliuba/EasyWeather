@@ -103,26 +103,26 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
             switch (SettingsPreferences.getUnits(mContext)) {
                 case SettingsPreferences.IMPERIAL:
                     mTempTextView.setText(mContext.getString(R.string.temp_and_feels_like_f_label,
-                            mHourlyWeather.temp, mHourlyWeather.feelsLike));
+                            Math.round(mHourlyWeather.temp), Math.round(mHourlyWeather.feelsLike)));
                     mWindTextView.setText(mContext.getString(R.string.wind_mph_label,
                             mHourlyWeather.windSpeed, windDirection));
                     break;
                 case SettingsPreferences.STANDARD:
                     mTempTextView.setText(mContext.getString(R.string.temp_and_feels_like_k_label,
-                            mHourlyWeather.temp, mHourlyWeather.feelsLike));
+                            Math.round(mHourlyWeather.temp), Math.round(mHourlyWeather.feelsLike)));
                     mWindTextView.setText(mContext.getString(R.string.wind_m_s_label,
                             mHourlyWeather.windSpeed, windDirection));
                     break;
                 default:
                     mTempTextView.setText(mContext.getString(R.string.temp_and_feels_like_c_label,
-                            mHourlyWeather.temp, mHourlyWeather.feelsLike));
+                            Math.round(mHourlyWeather.temp), Math.round(mHourlyWeather.feelsLike)));
                     mWindTextView.setText(mContext.getString(R.string.wind_m_s_label,
                             mHourlyWeather.windSpeed, windDirection));
                     break;
             }
 
             mPopTextView.setText(mContext.getString(R.string.pop_label,
-                    (int) (mHourlyWeather.pop / 100)));
+                    (int) (mHourlyWeather.pop * 100)));
             mUviTextView.setText(mContext.getString(R.string.uvi_label,
                     mHourlyWeather.uvi));
         }

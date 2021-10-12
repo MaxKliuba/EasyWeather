@@ -172,6 +172,26 @@ public class SearchWeatherFragment extends Fragment {
 
         mHourlyWeatherRecyclerView = (RecyclerView) view.findViewById(R.id.hourly_weather_recycler_view);
         mHourlyWeatherRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        mHourlyWeatherRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
+                if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                    rv.getParent().requestDisallowInterceptTouchEvent(true);
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
 
         mDailyWeatherRecyclerView = (RecyclerView) view.findViewById(R.id.daily_weather_recycler_view);
         mDailyWeatherRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
@@ -400,9 +420,9 @@ public class SearchWeatherFragment extends Fragment {
             switch (SettingsPreferences.getUnits(getActivity())) {
                 case SettingsPreferences.IMPERIAL:
                     mMainTempTextView.setText(getString(R.string.temp_f_label,
-                            mOneCallWeatherData.current.temp));
+                            Math.round(mOneCallWeatherData.current.temp)));
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_f_label,
-                            mOneCallWeatherData.current.feelsLike));
+                            Math.round(mOneCallWeatherData.current.feelsLike)));
                     mWindTextView.setText(getString(R.string.wind_mph_label,
                             mOneCallWeatherData.current.windSpeed, windDirection));
                     mVisibilityTextView.setText(getString(R.string.visibility_mi_label,
@@ -410,9 +430,9 @@ public class SearchWeatherFragment extends Fragment {
                     break;
                 case SettingsPreferences.STANDARD:
                     mMainTempTextView.setText(getString(R.string.temp_k_label,
-                            mOneCallWeatherData.current.temp));
+                            Math.round(mOneCallWeatherData.current.temp)));
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_k_label,
-                            mOneCallWeatherData.current.feelsLike));
+                            Math.round(mOneCallWeatherData.current.feelsLike)));
                     mWindTextView.setText(getString(R.string.wind_m_s_label,
                             mOneCallWeatherData.current.windSpeed, windDirection));
                     mVisibilityTextView.setText(getString(R.string.visibility_km_label,
@@ -420,9 +440,9 @@ public class SearchWeatherFragment extends Fragment {
                     break;
                 default:
                     mMainTempTextView.setText(getString(R.string.temp_c_label,
-                            mOneCallWeatherData.current.temp));
+                            Math.round(mOneCallWeatherData.current.temp)));
                     mMainFeelsLikeTextView.setText(getString(R.string.feels_like_temp_c_label,
-                            mOneCallWeatherData.current.feelsLike));
+                            Math.round(mOneCallWeatherData.current.feelsLike)));
                     mWindTextView.setText(getString(R.string.wind_m_s_label,
                             mOneCallWeatherData.current.windSpeed, windDirection));
                     mVisibilityTextView.setText(getString(R.string.visibility_km_label,

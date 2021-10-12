@@ -102,15 +102,15 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
             switch (SettingsPreferences.getUnits(mContext)) {
                 case SettingsPreferences.IMPERIAL:
                     mTempTextView.setText(mContext.getString(R.string.temp_max_min_f_label,
-                            mDailyWeather.temp.max, mDailyWeather.temp.min));
+                            Math.round(mDailyWeather.temp.max), Math.round(mDailyWeather.temp.min)));
                     break;
                 case SettingsPreferences.STANDARD:
                     mTempTextView.setText(mContext.getString(R.string.temp_max_min_k_label,
-                            mDailyWeather.temp.max, mDailyWeather.temp.min));
+                            Math.round(mDailyWeather.temp.max), Math.round(mDailyWeather.temp.min)));
                     break;
                 default:
                     mTempTextView.setText(mContext.getString(R.string.temp_max_min_c_label,
-                            mDailyWeather.temp.max, mDailyWeather.temp.min));
+                            Math.round(mDailyWeather.temp.max), Math.round(mDailyWeather.temp.min)));
                     break;
             }
         }

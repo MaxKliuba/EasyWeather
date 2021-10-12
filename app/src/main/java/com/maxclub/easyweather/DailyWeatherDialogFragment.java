@@ -98,51 +98,51 @@ public class DailyWeatherDialogFragment extends DialogFragment {
         switch (SettingsPreferences.getUnits(getActivity())) {
             case SettingsPreferences.IMPERIAL:
                 mTempMaxMinTextView.setText(getString(R.string.temp_max_min_f_label,
-                        dailyWeather.temp.max, dailyWeather.temp.min));
+                        Math.round(dailyWeather.temp.max), Math.round(dailyWeather.temp.min)));
                 mTempNightTextView.setText(getString(R.string.temp_and_feels_like_f_label,
-                        dailyWeather.temp.night, dailyWeather.feelsLike.night));
+                        Math.round(dailyWeather.temp.night), Math.round(dailyWeather.feelsLike.night)));
                 mTempMorningTextView.setText(getString(R.string.temp_and_feels_like_f_label,
-                        dailyWeather.temp.morn, dailyWeather.feelsLike.morn));
+                        Math.round(dailyWeather.temp.morn), Math.round(dailyWeather.feelsLike.morn)));
                 mTempDayTextView.setText(getString(R.string.temp_and_feels_like_f_label,
-                        dailyWeather.temp.day, dailyWeather.feelsLike.day));
+                        Math.round(dailyWeather.temp.day), Math.round(dailyWeather.feelsLike.day)));
                 mTempEveningTextView.setText(getString(R.string.temp_and_feels_like_f_label,
-                        dailyWeather.temp.eve, dailyWeather.feelsLike.eve));
+                        Math.round(dailyWeather.temp.eve), Math.round(dailyWeather.feelsLike.eve)));
                 mWindTextView.setText(getString(R.string.wind_mph_label,
                         dailyWeather.windSpeed, windDirection));
                 mDewPointTextView.setText(getString(R.string.temp_f_label,
-                        dailyWeather.dewPoint));
+                        Math.round(dailyWeather.dewPoint)));
                 break;
             case SettingsPreferences.STANDARD:
                 mTempMaxMinTextView.setText(getString(R.string.temp_max_min_k_label,
-                        dailyWeather.temp.max, dailyWeather.temp.min));
+                        Math.round(dailyWeather.temp.max), Math.round(dailyWeather.temp.min)));
                 mTempNightTextView.setText(getString(R.string.temp_and_feels_like_k_label,
-                        dailyWeather.temp.night, dailyWeather.feelsLike.night));
+                        Math.round(dailyWeather.temp.night), Math.round(dailyWeather.feelsLike.night)));
                 mTempMorningTextView.setText(getString(R.string.temp_and_feels_like_k_label,
-                        dailyWeather.temp.morn, dailyWeather.feelsLike.morn));
+                        Math.round(dailyWeather.temp.morn), Math.round(dailyWeather.feelsLike.morn)));
                 mTempDayTextView.setText(getString(R.string.temp_and_feels_like_k_label,
-                        dailyWeather.temp.day, dailyWeather.feelsLike.day));
+                        Math.round(dailyWeather.temp.day), Math.round(dailyWeather.feelsLike.day)));
                 mTempEveningTextView.setText(getString(R.string.temp_and_feels_like_k_label,
-                        dailyWeather.temp.eve, dailyWeather.feelsLike.eve));
+                        Math.round(dailyWeather.temp.eve), Math.round(dailyWeather.feelsLike.eve)));
                 mWindTextView.setText(getString(R.string.wind_m_s_label,
                         dailyWeather.windSpeed, windDirection));
                 mDewPointTextView.setText(getString(R.string.temp_k_label,
-                        dailyWeather.dewPoint));
+                        Math.round(dailyWeather.dewPoint)));
                 break;
             default:
                 mTempMaxMinTextView.setText(getString(R.string.temp_max_min_c_label,
-                        dailyWeather.temp.max, dailyWeather.temp.min));
+                        Math.round(dailyWeather.temp.max), Math.round(dailyWeather.temp.min)));
                 mTempNightTextView.setText(getString(R.string.temp_and_feels_like_c_label,
-                        dailyWeather.temp.night, dailyWeather.feelsLike.night));
+                        Math.round(dailyWeather.temp.night), Math.round(dailyWeather.feelsLike.night)));
                 mTempMorningTextView.setText(getString(R.string.temp_and_feels_like_c_label,
-                        dailyWeather.temp.morn, dailyWeather.feelsLike.morn));
+                        Math.round(dailyWeather.temp.morn), Math.round(dailyWeather.feelsLike.morn)));
                 mTempDayTextView.setText(getString(R.string.temp_and_feels_like_c_label,
-                        dailyWeather.temp.day, dailyWeather.feelsLike.day));
+                        Math.round(dailyWeather.temp.day), Math.round(dailyWeather.feelsLike.day)));
                 mTempEveningTextView.setText(getString(R.string.temp_and_feels_like_c_label,
-                        dailyWeather.temp.eve, dailyWeather.feelsLike.eve));
+                        Math.round(dailyWeather.temp.eve), Math.round(dailyWeather.feelsLike.eve)));
                 mWindTextView.setText(getString(R.string.wind_m_s_label,
                         dailyWeather.windSpeed, windDirection));
                 mDewPointTextView.setText(getString(R.string.temp_c_label,
-                        dailyWeather.dewPoint));
+                        Math.round(dailyWeather.dewPoint)));
                 break;
         }
         mPopTextView.setText(getString(R.string.pop_label, (int) (dailyWeather.pop * 100)));
