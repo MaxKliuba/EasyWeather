@@ -176,7 +176,7 @@ public class SearchWeatherFragment extends Fragment {
             @Override
             public boolean onInterceptTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
                 if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                    rv.getParent().requestDisallowInterceptTouchEvent(true);
+                    mMainContentContainer.getParent().requestDisallowInterceptTouchEvent(true);
                 }
 
                 return false;
@@ -184,12 +184,10 @@ public class SearchWeatherFragment extends Fragment {
 
             @Override
             public void onTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
-
             }
 
             @Override
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
             }
         });
 
@@ -199,7 +197,7 @@ public class SearchWeatherFragment extends Fragment {
             @Override
             public boolean onInterceptTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
                 if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                    rv.getParent().requestDisallowInterceptTouchEvent(true);
+                    mMainContentContainer.getParent().requestDisallowInterceptTouchEvent(true);
                 }
 
                 return false;
@@ -207,12 +205,10 @@ public class SearchWeatherFragment extends Fragment {
 
             @Override
             public void onTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
-
             }
 
             @Override
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
             }
         });
 

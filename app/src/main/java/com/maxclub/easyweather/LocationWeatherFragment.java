@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -253,7 +254,7 @@ public class LocationWeatherFragment extends Fragment {
             @Override
             public boolean onInterceptTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
                 if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                    rv.getParent().requestDisallowInterceptTouchEvent(true);
+                    mMainContentContainer.getParent().requestDisallowInterceptTouchEvent(true);
                 }
 
                 return false;
@@ -261,12 +262,10 @@ public class LocationWeatherFragment extends Fragment {
 
             @Override
             public void onTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
-
             }
 
             @Override
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
             }
         });
 
@@ -276,7 +275,7 @@ public class LocationWeatherFragment extends Fragment {
             @Override
             public boolean onInterceptTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
                 if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                    rv.getParent().requestDisallowInterceptTouchEvent(true);
+                    mMainContentContainer.getParent().requestDisallowInterceptTouchEvent(true);
                 }
 
                 return false;
@@ -284,12 +283,10 @@ public class LocationWeatherFragment extends Fragment {
 
             @Override
             public void onTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
-
             }
 
             @Override
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
             }
         });
 
